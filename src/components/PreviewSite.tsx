@@ -66,6 +66,8 @@ export default function PreviewSite({
   const frameRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLDivElement | null>(null);
   const [appliedScale, setAppliedScale] = useState(1);
+  const isUpdatingPreferences = useRef(false);
+  const baseScale = useRef(1);
 
   // —— Compact sizing
   const compact = variant === 'compact';
@@ -88,6 +90,9 @@ export default function PreviewSite({
   // —— Clamp the scale so the canvas never overflows the frame
   useEffect(() => {
     function recalc() {
+      // Skip recalculation if we're updating preferences
+      if (isUpdatingPreferences.current) return;
+      
       const frame = frameRef.current;
       const canvas = canvasRef.current;
       if (!frame || !canvas) return;
@@ -112,22 +117,51 @@ export default function PreviewSite({
 
       // Final scale = min(user zoom, fit-to-frame)
       const nextScale = Math.min(prefs.globalZoom, fitScale);
+      
+      // Store the base scale on first calculation
+      if (baseScale.current === 1) {
+        baseScale.current = nextScale;
+      }
+      
       setAppliedScale(nextScale);
     }
 
+    // Only recalc on mount and when globalZoom actually changes
     recalc();
 
-    // Recalc on resize of either frame or canvas
+    // Recalc on resize of frame only (not canvas content changes)
     const ro = new ResizeObserver(recalc);
     if (frameRef.current) ro.observe(frameRef.current);
-    if (canvasRef.current) ro.observe(canvasRef.current);
+    // Don't observe canvas to prevent zoom on text changes
     window.addEventListener('resize', recalc);
 
     return () => {
       ro.disconnect();
       window.removeEventListener('resize', recalc);
     };
-  }, [prefs.globalZoom]);
+  }, [prefs.globalZoom]); // Only depend on globalZoom, not all prefs
+
+  // —— Handle preference changes without triggering scale recalculation
+  useEffect(() => {
+    isUpdatingPreferences.current = true;
+    const timer = setTimeout(() => {
+      isUpdatingPreferences.current = false;
+    }, 300); // Longer delay to allow text changes to settle, especially for line height
+    
+    return () => clearTimeout(timer);
+  }, [prefs.fontSize, prefs.letterSpacing, prefs.lineHeight, prefs.dyslexiaFriendly]);
+
+  // —— Separate effect for line height changes to prevent zoom
+  useEffect(() => {
+    if (prefs.lineHeight) {
+      isUpdatingPreferences.current = true;
+      const timer = setTimeout(() => {
+        isUpdatingPreferences.current = false;
+      }, 500); // Extra long delay for line height changes
+      
+      return () => clearTimeout(timer);
+    }
+  }, [prefs.lineHeight]);
 
   return (
     <div className="space-y-2">
@@ -166,19 +200,28 @@ export default function PreviewSite({
         }}
         key={`dyslexia-${prefs.dyslexiaFriendly}`}
       >
-        {/* DH_ pattern background */}
+        {/* DH pattern background - alternating rows */}
         <div className="absolute inset-0 overflow-hidden" style={{ opacity: 0.3, zIndex: 0 }}>
-          {Array.from({ length: 20 }).map((_, i) => (
+          {Array.from({ length: 8 }).map((_, rowIndex) => (
             <div 
-              key={i} 
-              className="absolute text-white font-bold text-3xl"
+              key={rowIndex}
+              className="absolute w-full flex justify-center"
               style={{ 
-                left: `${(i * 13) % 100}%`, 
-                top: `${(i * 17) % 100}%`,
-                transform: `rotate(${(i * 5) % 45}deg)`,
+                top: `${rowIndex * 12.5}%`,
+                left: rowIndex % 2 === 0 ? '0' : '12.5%', // Offset even rows
               }}
             >
-              DH_
+              {Array.from({ length: 6 }).map((_, colIndex) => (
+                <div 
+                  key={`${rowIndex}-${colIndex}`}
+                  className="text-white font-bold text-2xl mx-4"
+                  style={{ 
+                    transform: `rotate(${Math.random() * 20 - 10}deg)`, // Slight random rotation
+                  }}
+                >
+                  DH
+                </div>
+              ))}
             </div>
           ))}
         </div>
