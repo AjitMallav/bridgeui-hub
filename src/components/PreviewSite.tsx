@@ -13,7 +13,7 @@ export default function PreviewSite({
   variant?: Variant;
 }) {
   // —— Derive tokens from prefs (single source of truth)
-  const vars = useMemo<React.CSSProperties>(() => {
+  const vars = useMemo(() => {
     const contrastBg =
       prefs.contrast === 'maximum' ? '#0a0a0a' : prefs.contrast === 'high' ? '#111827' : '#1f2937';
 
@@ -27,6 +27,11 @@ export default function PreviewSite({
       prefs.highVisibilityFocusRing || prefs.focusHighlight
         ? '3px solid #a78bfa'
         : '2px solid #94a3b8';
+        
+    // DubHacks '25 colors from screenshot
+    const dubhacksBackground = '#7dd3f7'; // Light blue background
+    const dubhacksText = '#1e2952';       // Navy text
+    const dubhacksAccent = '#ffb627';     // Yellow accent for buttons
 
     return {
       // typography
@@ -49,6 +54,11 @@ export default function PreviewSite({
 
       // link affordance
       '--pv-link-decoration': prefs.underlineLinks ? 'underline' : 'none',
+      
+      // DubHacks '25 theme colors
+      '--pv-dubhacks-bg': dubhacksBackground,
+      '--pv-dubhacks-text': dubhacksText,
+      '--pv-dubhacks-accent': dubhacksAccent,
     } as React.CSSProperties;
   }, [prefs]);
 
@@ -60,6 +70,20 @@ export default function PreviewSite({
   // —— Compact sizing
   const compact = variant === 'compact';
   const maxHeight = compact ? 420 : 680;
+
+  // —— Preload OpenDyslexic font when dyslexiaFriendly is enabled
+  useEffect(() => {
+    if (prefs.dyslexiaFriendly) {
+      // Preload the font to ensure it's available
+      const font = new FontFace('OpenDyslexic', 'url(https://cdn.jsdelivr.net/npm/open-dyslexic@1.0.3/woff/OpenDyslexic-Regular.woff)');
+      font.load().then(() => {
+        document.fonts.add(font);
+        console.log('OpenDyslexic font loaded successfully');
+      }).catch((error) => {
+        console.error('Failed to load OpenDyslexic font:', error);
+      });
+    }
+  }, [prefs.dyslexiaFriendly]);
 
   // —— Clamp the scale so the canvas never overflows the frame
   useEffect(() => {
@@ -107,18 +131,58 @@ export default function PreviewSite({
 
   return (
     <div className="space-y-2">
+      <style jsx global>{`
+        /* Load OpenDyslexic font correctly */
+        @font-face {
+          font-family: 'OpenDyslexic';
+          src: url('https://cdn.jsdelivr.net/npm/open-dyslexic@1.0.3/woff/OpenDyslexic-Regular.woff') format('woff');
+          font-weight: normal;
+          font-style: normal;
+          font-display: swap;
+        }
+
+        @font-face {
+          font-family: 'OpenDyslexic';
+          src: url('https://cdn.jsdelivr.net/npm/open-dyslexic@1.0.3/woff/OpenDyslexic-Bold.woff') format('woff');
+          font-weight: bold;
+          font-style: normal;
+          font-display: swap;
+        }
+      `}</style>
+
       {/* FRAME — fixed container that never scales */}
       <div
         ref={frameRef}
-        className="rounded-2xl border border-slate-300 bg-white p-4 shadow-sm overflow-hidden mx-auto"
+        className="rounded-2xl border border-slate-300 overflow-hidden mx-auto"
         style={{
             ...vars,
             maxHeight,
             width: '100%',
             minWidth: '500px',
-            maxWidth: '900px', // ⬅️ Increase width here
+            maxWidth: '900px',
+            backgroundColor: 'var(--pv-dubhacks-bg)',
+            position: 'relative',
+            fontFamily: prefs.dyslexiaFriendly ? 'OpenDyslexic, "Comic Sans MS", cursive, sans-serif' : 'inherit',
         }}
+        key={`dyslexia-${prefs.dyslexiaFriendly}`}
       >
+        {/* DH_ pattern background */}
+        <div className="absolute inset-0 overflow-hidden" style={{ opacity: 0.3, zIndex: 0 }}>
+          {Array.from({ length: 20 }).map((_, i) => (
+            <div 
+              key={i} 
+              className="absolute text-white font-bold text-3xl"
+              style={{ 
+                left: `${(i * 13) % 100}%`, 
+                top: `${(i * 17) % 100}%`,
+                transform: `rotate(${(i * 5) % 45}deg)`,
+              }}
+            >
+              DH_
+            </div>
+          ))}
+        </div>
+        
         {/* CANVAS — inner content that scales, always contained */}
         <div
           ref={canvasRef}
@@ -129,120 +193,101 @@ export default function PreviewSite({
             fontSize: 'var(--pv-font-size)',
             letterSpacing: 'var(--pv-letter)',
             lineHeight: 'var(--pv-leading)',
+            position: 'relative',
+            zIndex: 1,
+            padding: '1rem',
           }}
         >
-          {/* Header row */}
-          <div
-            className="rounded-xl px-3 py-2 text-white"
-            style={{ background: 'linear-gradient(90deg, var(--pv-contrast-bg), #312e81)' }}
-          >
-            <div className="flex items-center justify-between">
-              <div className="text-sm font-bold tracking-wide">Preview</div>
-              {prefs.handsFreeMode && (
-                <button className="pv-button bg-white/20 text-white">🎤 Voice Mode</button>
-              )}
+          {/* Header with navigation menu */}
+          <div className="rounded-xl overflow-hidden mb-4">
+            <div className="flex items-center bg-white/80 p-2 rounded-lg">
+              <div className="mr-4">
+                <div className="flex items-center justify-center w-10 h-10 bg-white rounded border border-slate-200">
+                  <span className="font-bold text-xs" style={{ color: 'var(--pv-dubhacks-text)' }}>DH</span>
+                </div>
+              </div>
+              <div className="flex flex-1 justify-between">
+                {['Impact', 'Theme', 'Tracks', 'Attend', 'Schedule', 'Sponsor', 'FAQs'].map((item) => (
+                  <a
+                    key={item}
+                    href="#"
+                    className="px-3 py-1 rounded-md hover:bg-slate-100"
+                    style={{ 
+                      color: 'var(--pv-dubhacks-text)', 
+                      textDecoration: 'var(--pv-link-decoration)',
+                      fontWeight: 500,
+                      fontFamily: prefs.dyslexiaFriendly ? 'OpenDyslexic, sans-serif' : 'inherit'
+                    }}
+                  >
+                    {item}
+                  </a>
+                ))}
+              </div>
             </div>
           </div>
 
-          {/* Top nav */}
-          <div className="mt-2 flex flex-wrap" style={{ gap: 'var(--pv-gap)' }}>
-            {['Home', 'Catalog', 'Orders', 'Support'].map((t, i) => (
-              <a
-                key={t}
-                href="#"
-                className="rounded-md px-2 py-1 text-slate-900 hover:bg-slate-100 focus:bg-slate-100"
-                style={{ textDecoration: 'var(--pv-link-decoration)', outline: 'none' }}
-              >
-                {t}
-                {i < 3 ? ' ›' : ''}
-              </a>
-            ))}
-          </div>
-
-          {/* Content row */}
-          <div className={`mt-2 grid ${prefs.hideDistractingUI ? 'grid-cols-1' : 'grid-cols-3'} gap-2`}>
-            {/* Main card */}
-            <div className={prefs.hideDistractingUI ? '' : 'col-span-2'}>
-              <div className="rounded-xl border border-slate-300 p-3">
-                <div className="text-slate-900 font-semibold">Featured Product</div>
-                <p className="mt-1 text-slate-800">
-                  Text size, letter spacing, line height, and link style are reflected here.{' '}
-                  <a href="#" style={{ textDecoration: 'var(--pv-link-decoration)' }}>
-                    Learn more
-                  </a>
-                  .
+          {/* Main content */}
+          <div className="mt-8">
+            <div className="flex">
+              <div className="w-1/2">
+                <h1 className="text-4xl font-bold mb-2" style={{ color: 'var(--pv-dubhacks-text)', fontFamily: prefs.dyslexiaFriendly ? 'OpenDyslexic, sans-serif' : 'inherit' }}>
+                  DubHacks<br />2025
+                </h1>
+                <p className="text-lg mb-4" style={{ color: 'var(--pv-dubhacks-text)', fontFamily: prefs.dyslexiaFriendly ? 'OpenDyslexic, sans-serif' : 'inherit' }}>
+                  October 18-19, 2025
                 </p>
-
-                {/* Buttons row */}
-                <div className="pv-row mt-2 flex flex-wrap" style={{ gap: 'var(--pv-row-gap)' }}>
-                  <button className="pv-button bg-slate-900 text-white">Primary</button>
-                  <button className="pv-button border border-slate-300 bg-white text-slate-900">Secondary</button>
-                  <button className="pv-button bg-white text-slate-900" style={{ border: '2px dashed #cbd5e1' }}>
-                    Outline
-                  </button>
-                </div>
+                <p className="text-md mb-6" style={{ color: 'var(--pv-dubhacks-text)', fontFamily: prefs.dyslexiaFriendly ? 'OpenDyslexic, sans-serif' : 'inherit' }}>
+                  University of Washington, Seattle
+                </p>
+                <a 
+                  href="#"
+                  className="pv-button text-slate-900 font-bold px-6 inline-block"
+                  style={{ 
+                    backgroundColor: 'var(--pv-dubhacks-accent)',
+                    border: 'none',
+                    textDecoration: 'var(--pv-link-decoration)',
+                    fontFamily: prefs.dyslexiaFriendly ? 'OpenDyslexic, sans-serif' : 'inherit'
+                  }}
+                >
+                  Sponsor Us
+                </a>
               </div>
-
-              {/* Form */}
-              <div className="mt-2 rounded-xl border border-slate-300 p-3">
-                <div className="text-slate-900 font-semibold">Filters</div>
-                <input
-                  className="pv-input mt-2 w-full rounded-lg border border-slate-300 text-slate-900 placeholder-slate-500"
-                  placeholder="Search products…"
-                />
-                <div className="mt-2 flex flex-wrap" style={{ gap: 'var(--pv-gap)' }}>
-                  {['Small', 'Medium', 'Large'].map((lbl) => (
-                    <label key={lbl} className="flex items-center gap-2">
-                      <input type="checkbox" className="h-5 w-5" />
-                      <span className="text-slate-900">{lbl}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* High-contrast area */}
-              {prefs.contrast !== 'normal' && (
-                <div className="mt-2 rounded-xl p-3 text-white" style={{ background: 'var(--pv-contrast-bg)' }}>
-                  <div className="font-semibold">High Contrast</div>
-                  <p>Buttons and inputs remain readable in this block.</p>
-                  <div className="pv-row mt-2 flex flex-wrap" style={{ gap: 'var(--pv-row-gap)' }}>
-                    <button className="pv-button bg-white text-slate-900">Action</button>
-                    <button className="pv-button bg-white/20 text-white" style={{ outline: 'var(--pv-focus)' }}>
-                      Focused
-                    </button>
+              <div className="w-1/2">
+                {/* This would be where the toy box image would go */}
+                <div className="h-40 flex items-center justify-center">
+                  <div className="w-32 h-32 bg-blue-900 rounded-lg flex items-center justify-center">
+                    <span className="text-white">Toy Box</span>
                   </div>
                 </div>
-              )}
+              </div>
             </div>
-
-            {/* Sidebar (hidden if “hide distractions” on) */}
-            {!prefs.hideDistractingUI && (
-              <aside className="rounded-xl border border-slate-300 p-3">
-                <div className="text-slate-900 font-semibold">Sidebar</div>
-                <ul className="mt-1 space-y-1">
-                  <li>
-                    <a href="#" style={{ textDecoration: 'var(--pv-link-decoration)' }}>
-                      Trending #1
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" style={{ textDecoration: 'var(--pv-link-decoration)' }}>
-                      Trending #2
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" style={{ textDecoration: 'var(--pv-link-decoration)' }}>
-                      Trending #3
-                    </a>
-                  </li>
-                </ul>
-              </aside>
-            )}
           </div>
+        </div>
+
+        {/* Add the MLH badge to the top right corner */}
+        <div className="absolute top-0 right-0 z-10">
+          <div className="bg-slate-800 text-white p-2 rounded-bl-lg flex flex-col items-center">
+            <div className="text-xs font-bold mb-1">MLH</div>
+            <div className="text-xs font-bold">OFFICIAL</div>
+            <div className="mt-2 text-xs font-bold">2025</div>
+            <div className="text-xs">SEASON</div>
+          </div>
+        </div>
+
+        {/* Add toy images */}
+        <div className="absolute bottom-0 right-0 z-10">
+          <div className="flex items-end">
+            <div className="w-16 h-16 bg-green-500 rounded-full mr-2 mb-2"></div>
+            <div className="w-12 h-12 bg-red-400 rounded-full mr-2"></div>
+          </div>
+        </div>
+        
+        {/* Beach ball in bottom left */}
+        <div className="absolute bottom-0 left-0 z-10">
+          <div className="w-16 h-16 bg-gradient-to-r from-blue-400 to-red-400 rounded-full mb-2 ml-2"></div>
         </div>
       </div>
 
-      {/* Style scope — minimal and consistent */}
       <style jsx>{`
         /* Global motion control inside preview */
         div :global(*) {
@@ -278,8 +323,12 @@ export default function PreviewSite({
           div :global(.pv-input),
           div :global(a),
           div :global(p),
-          div :global(li) {
-            font-variation-settings: "wght" 520;
+          div :global(li),
+          div :global(h1),
+          div :global(h2),
+          div :global(h3),
+          div :global(span) {
+            font-family: 'OpenDyslexic', "Comic Sans MS", cursive, sans-serif !important;
             -webkit-font-smoothing: antialiased;
             text-rendering: optimizeLegibility;
           }
