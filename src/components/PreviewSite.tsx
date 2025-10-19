@@ -14,8 +14,41 @@ export default function PreviewSite({
 }) {
   // —— Derive tokens from prefs (single source of truth)
   const vars = useMemo(() => {
-    const contrastBg =
-      prefs.contrast === 'maximum' ? '#0a0a0a' : prefs.contrast === 'high' ? '#111827' : '#1f2937';
+    // Enhanced contrast system using shades of existing DubHacks colors
+    const contrastSettings = {
+      normal: {
+        background: '#7dd3f7',      // Original light blue
+        text: '#1e2952',             // Original navy text
+        accent: '#ffb627',           // Original yellow accent
+        navBg: '#ffffff',            // White navigation
+        navText: '#1e2952',          // Navy navigation text
+        buttonBg: '#ffb627',         // Yellow button
+        buttonText: '#1e2952',       // Navy button text
+        border: '#e5e7eb',           // Light gray border
+      },
+      high: {
+        background: '#5bb8e8',      // Darker blue for more contrast
+        text: '#0f1a2e',             // Darker navy for better readability
+        accent: '#e6a500',           // Darker yellow for better contrast
+        navBg: '#f8fafc',            // Very light gray navigation
+        navText: '#0f1a2e',          // Darker navy navigation text
+        buttonBg: '#e6a500',         // Darker yellow button
+        buttonText: '#0f1a2e',       // Darker navy button text
+        border: '#cbd5e1',           // Darker gray border
+      },
+      maximum: {
+        background: '#3b82f6',      // Much darker blue for maximum contrast
+        text: '#ffffff',            // White text for maximum contrast
+        accent: '#fbbf24',           // Brighter yellow for maximum visibility
+        navBg: '#1e293b',           // Dark navigation
+        navText: '#ffffff',         // White navigation text
+        buttonBg: '#fbbf24',         // Bright yellow button
+        buttonText: '#1e293b',       // Dark text on bright button
+        border: '#64748b',           // Medium gray border
+      }
+    };
+
+    const contrast = contrastSettings[prefs.contrast];
 
     const letter = prefs.letterSpacing === 'wide' ? '0.04em' : '0';
     const leading = prefs.lineHeight === 'loose' ? 1.9 : prefs.lineHeight === 'relaxed' ? 1.65 : 1.5;
@@ -27,11 +60,6 @@ export default function PreviewSite({
       prefs.highVisibilityFocusRing || prefs.focusHighlight
         ? '3px solid #a78bfa'
         : '2px solid #94a3b8';
-        
-    // DubHacks '25 colors from screenshot
-    const dubhacksBackground = '#7dd3f7'; // Light blue background
-    const dubhacksText = '#1e2952';       // Navy text
-    const dubhacksAccent = '#ffb627';     // Yellow accent for buttons
 
     return {
       // typography
@@ -50,15 +78,19 @@ export default function PreviewSite({
 
       // focus & contrast
       '--pv-focus': focusRing,
-      '--pv-contrast-bg': contrastBg,
 
       // link affordance
       '--pv-link-decoration': prefs.underlineLinks ? 'underline' : 'none',
       
-      // DubHacks '25 theme colors
-      '--pv-dubhacks-bg': dubhacksBackground,
-      '--pv-dubhacks-text': dubhacksText,
-      '--pv-dubhacks-accent': dubhacksAccent,
+      // Enhanced contrast colors
+      '--pv-bg': contrast.background,
+      '--pv-text': contrast.text,
+      '--pv-accent': contrast.accent,
+      '--pv-nav-bg': contrast.navBg,
+      '--pv-nav-text': contrast.navText,
+      '--pv-button-bg': contrast.buttonBg,
+      '--pv-button-text': contrast.buttonText,
+      '--pv-border': contrast.border,
     } as React.CSSProperties;
   }, [prefs]);
 
@@ -112,11 +144,12 @@ export default function PreviewSite({
       const safeW = naturalW || 1;
       const safeH = naturalH || 1;
 
-      // Scale that fits within the frame
-      const fitScale = Math.min(frameW / safeW, frameH / safeH);
-
-      // Final scale = min(user zoom, fit-to-frame)
-      const nextScale = Math.min(prefs.globalZoom, fitScale);
+      // Calculate the base scale that fits within the frame
+      const baseFitScale = Math.min(frameW / safeW, frameH / safeH);
+      
+      // Apply global zoom to make content larger
+      // The zoom will make elements bigger as the slider moves
+      const nextScale = baseFitScale * prefs.globalZoom;
       
       // Store the base scale on first calculation
       if (baseScale.current === 1) {
@@ -190,11 +223,11 @@ export default function PreviewSite({
         className="rounded-2xl border border-slate-300 overflow-hidden mx-auto"
         style={{
             ...vars,
-            maxHeight,
+            maxHeight: maxHeight * prefs.globalZoom,
             width: '100%',
             minWidth: '500px',
             maxWidth: '900px',
-            backgroundColor: 'var(--pv-dubhacks-bg)',
+            backgroundColor: 'var(--pv-bg)',
             position: 'relative',
             fontFamily: prefs.dyslexiaFriendly ? 'OpenDyslexic, "Comic Sans MS", cursive, sans-serif' : 'inherit',
         }}
@@ -244,10 +277,10 @@ export default function PreviewSite({
         >
           {/* Header with navigation menu */}
           <div className="rounded-xl overflow-hidden mb-4">
-            <div className="flex items-center bg-white/80 p-2 rounded-lg">
+            <div className="flex items-center p-2 rounded-lg" style={{ backgroundColor: 'var(--pv-nav-bg)' }}>
               <div className="mr-4">
-                <div className="flex items-center justify-center w-10 h-10 bg-white rounded border border-slate-200">
-                  <span className="font-bold text-xs" style={{ color: 'var(--pv-dubhacks-text)' }}>DH</span>
+                <div className="flex items-center justify-center w-10 h-10 rounded border" style={{ backgroundColor: 'var(--pv-nav-bg)', borderColor: 'var(--pv-border)' }}>
+                  <span className="font-bold text-xs" style={{ color: 'var(--pv-nav-text)' }}>DH</span>
                 </div>
               </div>
               <div className="flex flex-1 justify-between">
@@ -255,12 +288,21 @@ export default function PreviewSite({
                   <a
                     key={item}
                     href="#"
-                    className="px-3 py-1 rounded-md hover:bg-slate-100"
+                    className="px-3 py-1 rounded-md"
                     style={{ 
-                      color: 'var(--pv-dubhacks-text)', 
+                      color: 'var(--pv-nav-text)', 
                       textDecoration: 'var(--pv-link-decoration)',
                       fontWeight: 500,
-                      fontFamily: prefs.dyslexiaFriendly ? 'OpenDyslexic, sans-serif' : 'inherit'
+                      fontFamily: prefs.dyslexiaFriendly ? 'OpenDyslexic, sans-serif' : 'inherit',
+                      backgroundColor: 'transparent',
+                      transition: 'background-color 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = prefs.contrast === 'maximum' ? '#333333' : 
+                                                           prefs.contrast === 'high' ? '#374151' : '#f1f5f9';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = 'transparent';
                     }}
                   >
                     {item}
@@ -274,20 +316,21 @@ export default function PreviewSite({
           <div className="mt-8">
             <div className="flex">
               <div className="w-1/2">
-                <h1 className="text-4xl font-bold mb-2" style={{ color: 'var(--pv-dubhacks-text)', fontFamily: prefs.dyslexiaFriendly ? 'OpenDyslexic, sans-serif' : 'inherit' }}>
+                <h1 className="text-4xl font-bold mb-2" style={{ color: 'var(--pv-text)', fontFamily: prefs.dyslexiaFriendly ? 'OpenDyslexic, sans-serif' : 'inherit' }}>
                   DubHacks<br />2025
                 </h1>
-                <p className="text-lg mb-4" style={{ color: 'var(--pv-dubhacks-text)', fontFamily: prefs.dyslexiaFriendly ? 'OpenDyslexic, sans-serif' : 'inherit' }}>
+                <p className="text-lg mb-4" style={{ color: 'var(--pv-text)', fontFamily: prefs.dyslexiaFriendly ? 'OpenDyslexic, sans-serif' : 'inherit' }}>
                   October 18-19, 2025
                 </p>
-                <p className="text-md mb-6" style={{ color: 'var(--pv-dubhacks-text)', fontFamily: prefs.dyslexiaFriendly ? 'OpenDyslexic, sans-serif' : 'inherit' }}>
+                <p className="text-md mb-6 italic" style={{ color: 'var(--pv-text)', fontFamily: prefs.dyslexiaFriendly ? 'OpenDyslexic, sans-serif' : 'inherit' }}>
                   University of Washington, Seattle
                 </p>
                 <a 
                   href="#"
-                  className="pv-button text-slate-900 font-bold px-6 inline-block"
+                  className="pv-button font-bold px-6 inline-block"
                   style={{ 
-                    backgroundColor: 'var(--pv-dubhacks-accent)',
+                    backgroundColor: 'var(--pv-button-bg)',
+                    color: 'var(--pv-button-text)',
                     border: 'none',
                     textDecoration: 'var(--pv-link-decoration)',
                     fontFamily: prefs.dyslexiaFriendly ? 'OpenDyslexic, sans-serif' : 'inherit'
@@ -336,7 +379,7 @@ export default function PreviewSite({
 
         {/* Add the MLH badge to the top right corner */}
         <div className="absolute top-0 right-0 z-10">
-          <div className="bg-slate-800 text-white p-1 rounded-bl-lg flex flex-col items-center">
+          <div className="p-1 rounded-bl-lg flex flex-col items-center" style={{ backgroundColor: 'var(--pv-nav-bg)', color: 'var(--pv-nav-text)' }}>
             <div className="text-xs font-bold mb-0.5">MLH</div>
             <div className="text-xs font-bold">OFFICIAL</div>
             <div className="mt-1 text-xs font-bold">2025</div>
