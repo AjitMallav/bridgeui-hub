@@ -2,8 +2,8 @@
 import './globals.css';
 
 export const metadata = {
-  title: 'BridgeUI Hub',
-  description: 'Demo-only frontend for BridgeUI',
+  title: 'Robyn',
+  description: 'Demo-only frontend for Robyn',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

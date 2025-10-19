@@ -35,7 +35,7 @@ export default function Landing() {
             </span>
           </h1>
           <p className="mx-auto mb-8 max-w-3xl text-xl text-gray-600">
-            BridgeUI uses AI to dynamically adjust websites to match your needs.
+            Robyn uses AI to dynamically adjust websites to match your needs.
             Set your preferences once, and watch the web adapt to you.
           </p>
           <Link
