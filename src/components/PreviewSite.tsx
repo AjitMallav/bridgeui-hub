@@ -276,42 +276,64 @@ export default function PreviewSite({
           }}
         >
           {/* Header with navigation menu */}
-          <div className="rounded-xl overflow-hidden mb-4">
-            <div className="flex items-center p-2 rounded-lg" style={{ backgroundColor: 'var(--pv-nav-bg)' }}>
+          <div className="rounded-3xl overflow-hidden mb-4">
+            <div
+              className="flex items-center p-2 rounded-lg backdrop-blur-md bg-white/20 border border-white/30 shadow-sm"
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.15)', // translucent glass effect
+                backdropFilter: 'blur(12px)', // Safari support
+              }}
+            >
               <div className="mr-4">
-                <div className="flex items-center justify-center w-10 h-10 rounded border" style={{ backgroundColor: 'var(--pv-nav-bg)', borderColor: 'var(--pv-border)' }}>
-                  <span className="font-bold text-xs" style={{ color: 'var(--pv-nav-text)' }}>DH</span>
+                <div
+                  className="flex items-center justify-center w-10 h-10 rounded border border-white/30 bg-white/20 backdrop-blur-sm"
+                >
+                  <span
+                    className="font-bold text-xs"
+                    style={{ color: 'var(--pv-nav-text)' }}
+                  >
+                    DH
+                  </span>
                 </div>
               </div>
+
               <div className="flex flex-1 justify-between">
-                {['Impact', 'Theme', 'Tracks', 'Attend', 'Schedule', 'Sponsor', 'FAQs'].map((item) => (
-                  <a
-                    key={item}
-                    href="#"
-                    className="px-3 py-1 rounded-md"
-                    style={{ 
-                      color: 'var(--pv-nav-text)', 
-                      textDecoration: 'var(--pv-link-decoration)',
-                      fontWeight: 500,
-                      fontFamily: prefs.dyslexiaFriendly ? 'OpenDyslexic, sans-serif' : 'inherit',
-                      backgroundColor: 'transparent',
-                      transition: 'background-color 0.2s ease'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = prefs.contrast === 'maximum' ? '#333333' : 
-                                                           prefs.contrast === 'high' ? '#374151' : '#f1f5f9';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = 'transparent';
-                    }}
-                  >
-                    {item}
-                  </a>
-                ))}
+                {['Impact', 'Theme', 'Tracks', 'Attend', 'Schedule', 'Sponsor', 'FAQs'].map(
+                  (item) => (
+                    <a
+                      key={item}
+                      href="#"
+                      className="px-3 py-1 rounded-md transition-colors duration-200"
+                      style={{
+                        color: 'var(--pv-nav-text)',
+                        textDecoration: 'var(--pv-link-decoration)',
+                        fontWeight: 500,
+                        fontFamily: prefs.dyslexiaFriendly
+                          ? 'OpenDyslexic, sans-serif'
+                          : 'inherit',
+                        backgroundColor: 'transparent',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor =
+                          prefs.contrast === 'maximum'
+                            ? 'rgba(51, 51, 51, 0.4)'
+                            : prefs.contrast === 'high'
+                            ? 'rgba(55, 65, 81, 0.4)'
+                            : 'rgba(255, 255, 255, 0.25)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                      }}
+                    >
+                      {item}
+                    </a>
+                  )
+                )}
               </div>
             </div>
           </div>
 
+          
           {/* Main content */}
           <div className="mt-8">
             <div className="flex">
@@ -377,15 +399,7 @@ export default function PreviewSite({
           </div>
         </div>
 
-        {/* Add the MLH badge to the top right corner */}
-        <div className="absolute top-0 right-0 z-10">
-          <div className="p-1 rounded-bl-lg flex flex-col items-center" style={{ backgroundColor: 'var(--pv-nav-bg)', color: 'var(--pv-nav-text)' }}>
-            <div className="text-xs font-bold mb-0.5">MLH</div>
-            <div className="text-xs font-bold">OFFICIAL</div>
-            <div className="mt-1 text-xs font-bold">2025</div>
-            <div className="text-xs">SEASON</div>
-          </div>
-        </div>
+
 
       </div>
 

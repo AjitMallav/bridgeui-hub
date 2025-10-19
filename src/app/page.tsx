@@ -11,9 +11,9 @@ export default function Landing() {
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-2">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-purple-600 to-blue-600 text-white font-bold">
-              B
+              R
             </div>
-            <span className="text-2xl font-bold text-gray-800">BridgeUI</span>
+            <span className="text-2xl font-bold text-gray-800">Robyn</span>
           </div>
           <Link
             href="/login"

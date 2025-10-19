@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import BridgePreview from '@/components/PreviewSite';
-import { Download, Check, User, HelpCircle, Settings, Eye, Brain, Sliders } from 'lucide-react';
+import { Download, Check, User, HelpCircle, Settings, Eye, Brain, Sliders, InfoIcon } from 'lucide-react';
 import {
   requireUserOrRedirect,
   setUser as persistUser,
@@ -12,7 +12,7 @@ import {
   type BridgePreferences,
 } from '@/lib/demoAuth';
 
-type Tab = 'overview' | 'profile' | 'advanced' | 'help';
+type Tab = 'overview' | 'profile' | 'help';
 
 const CONDITIONS: Array<{ id: string; name: string; icon: any; description: string }> = [
   { id: 'adhd', name: 'ADHD', icon: Brain, description: 'Reduce motion, emphasize focus, and hide distractions.' },
@@ -76,8 +76,8 @@ export default function Dashboard() {
       <div className="mx-auto max-w-7xl px-6 py-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="grid h-10 w-10 place-items-center rounded-lg bg-gradient-to-br from-purple-600 to-blue-600 text-white font-bold">B</div>
-            <div className="text-2xl font-bold text-slate-900">BridgeUI</div>
+            <div className="grid h-10 w-10 place-items-center rounded-lg bg-gradient-to-br from-purple-600 to-blue-600 text-white font-bold">R</div>
+            <div className="text-2xl font-bold text-slate-900">Robyn</div>
           </div>
           <div className="flex items-center gap-3">
             <span className="hidden text-slate-900 sm:inline">Hello, <b>{user.name}</b></span>
@@ -92,9 +92,8 @@ export default function Dashboard() {
 
         {/* Tabs */}
         <div className="mt-6 flex gap-2">
-          <TabBtn icon={<Settings size={16} />} active={tab === 'overview'} onClick={() => setTab('overview')}>Overview</TabBtn>
-          <TabBtn icon={<User size={16} />} active={tab === 'profile'} onClick={() => setTab('profile')}>Profile</TabBtn>
-          <TabBtn icon={<Settings size={16} />} active={tab === 'advanced'} onClick={() => setTab('advanced')}>Advanced</TabBtn>
+          <TabBtn icon={<InfoIcon size={16} />} active={tab === 'overview'} onClick={() => setTab('overview')}>Overview</TabBtn>
+          <TabBtn icon={<Settings size={16} />} active={tab === 'profile'} onClick={() => setTab('profile')}>Specs</TabBtn>
           <TabBtn icon={<HelpCircle size={16} />} active={tab === 'help'} onClick={() => setTab('help')}>Help</TabBtn>
         </div>
 
@@ -130,21 +129,39 @@ export default function Dashboard() {
           )}
 
           {tab === 'profile' && (
-            <section className="grid gap-6 lg:grid-cols-3">
-              {/* Conditions */}
-              <div className="lg:col-span-2 rounded-2xl border border-slate-300 bg-white p-6 shadow-sm">
+            <section className="flex flex-col lg:flex-row gap-6">
+              {/* Your Profile */}
+              <div className="w-full lg:w-1/2 rounded-2xl border border-slate-300 bg-white p-6 shadow-sm">
                 <h2 className="text-lg font-semibold text-slate-900">Your Profile</h2>
-                <p className="mt-1 text-sm text-slate-800">Pick the categories that apply, then fine-tune specifics.</p>
+                <p className="mt-1 text-sm text-slate-800">
+                  Pick the categories that apply, then fine-tune specifics.
+                </p>
 
                 <div className="mt-4 grid gap-3 sm:grid-cols-2">
                   {CONDITIONS.map(({ id, name, icon: Icon, description }) => {
                     const active = user.conditions.includes(id);
                     return (
-                      <div key={id} className={'rounded-xl border p-4 transition ' + (active ? 'border-purple-600 bg-purple-50' : 'border-slate-300 hover:bg-slate-50')}>
+                      <div
+                        key={id}
+                        className={
+                          'rounded-xl border p-4 transition ' +
+                          (active
+                            ? 'border-purple-600 bg-purple-50'
+                            : 'border-slate-300 hover:bg-slate-50')
+                        }
+                      >
                         <div className="flex items-start justify-between">
                           <div className="flex items-center gap-3">
-                            <div className={'grid h-10 w-10 place-items-center rounded-lg ' + (active ? 'bg-purple-100' : 'bg-slate-100')}>
-                              <Icon className={active ? 'text-purple-700' : 'text-slate-600'} size={18} />
+                            <div
+                              className={
+                                'grid h-10 w-10 place-items-center rounded-lg ' +
+                                (active ? 'bg-purple-100' : 'bg-slate-100')
+                              }
+                            >
+                              <Icon
+                                className={active ? 'text-purple-700' : 'text-slate-600'}
+                                size={18}
+                              />
                             </div>
                             <div>
                               <div className="font-semibold text-slate-900">{name}</div>
@@ -153,19 +170,43 @@ export default function Dashboard() {
                           </div>
                           <button
                             onClick={() => toggleCond(id)}
-                            className={'rounded-xl px-3 py-1 text-xs font-semibold ' + (active ? 'bg-purple-600 text-white' : 'border border-slate-300 text-slate-900 bg-white')}
+                            className={
+                              'rounded-xl px-3 py-1 text-xs font-semibold ' +
+                              (active
+                                ? 'bg-purple-600 text-white'
+                                : 'border border-slate-300 text-slate-900 bg-white')
+                            }
                           >
                             {active ? 'Selected' : 'Select'}
                           </button>
                         </div>
 
-                        {/* Subsection controls */}
                         {active && (
                           <div className="mt-4 space-y-4">
-                            {id === 'adhd' && <ADHDControls prefs={p} onChange={prefs => save({ preferences: prefs })} />}
-                            {id === 'dyslexia' && <DyslexiaControls prefs={p} onChange={prefs => save({ preferences: prefs })} />}
-                            {id === 'low-vision' && <LowVisionControls prefs={p} onChange={prefs => save({ preferences: prefs })} />}
-                            {id === 'motor-control' && <MotorControls prefs={p} onChange={prefs => save({ preferences: prefs })} />}
+                            {id === 'adhd' && (
+                              <ADHDControls
+                                prefs={p}
+                                onChange={(prefs) => save({ preferences: prefs })}
+                              />
+                            )}
+                            {id === 'dyslexia' && (
+                              <DyslexiaControls
+                                prefs={p}
+                                onChange={(prefs) => save({ preferences: prefs })}
+                              />
+                            )}
+                            {id === 'low-vision' && (
+                              <LowVisionControls
+                                prefs={p}
+                                onChange={(prefs) => save({ preferences: prefs })}
+                              />
+                            )}
+                            {id === 'motor-control' && (
+                              <MotorControls
+                                prefs={p}
+                                onChange={(prefs) => save({ preferences: prefs })}
+                              />
+                            )}
                           </div>
                         )}
                       </div>
@@ -175,31 +216,11 @@ export default function Dashboard() {
               </div>
 
               {/* Live Preview */}
-              <div className="rounded-2xl border border-slate-300 bg-white p-6 shadow-sm">
-                <h3 className="text-base font-semibold text-slate-900">Live Preview</h3>
-                <BridgePreview prefs={p} variant="compact" />
-              </div>
-            </section>
-          )}
-
-          {tab === 'advanced' && (
-            <section className="grid gap-6 lg:grid-cols-3">
-              {/* Advanced controls */}
-              <div className="lg:col-span-2 rounded-2xl border border-slate-300 bg-white p-6 shadow-sm">
-                <h2 className="text-lg font-semibold text-slate-900">Advanced Settings</h2>
-                <p className="mt-1 text-sm text-slate-800">These apply across all categories.</p>
-
-                <CoreControls prefs={p} onChange={prefs => save({ preferences: prefs })} />
-
-                <div className="mt-6 rounded-xl border border-purple-300 bg-purple-50 p-4 text-sm text-purple-900">
-                  ✓ Preferences saved locally for this session. The extension demo reads these numbers.
+              <div className="w-full lg:w-1/2 rounded-2xl border border-slate-300 bg-white p-8 shadow-sm overflow-hidden">
+                <h3 className="text-base font-semibold text-slate-900 mb-4">Live Preview</h3>
+                <div className="rounded-lg border border-slate-200 overflow-hidden p-4 bg-slate-50">
+                  <BridgePreview prefs={p} variant="compact" />
                 </div>
-              </div>
-
-              {/* Live Preview */}
-              <div className="rounded-2xl border border-slate-300 bg-white p-6 shadow-sm">
-                <h3 className="text-base font-semibold text-slate-900">Live Preview</h3>
-                <BridgePreview prefs={p} variant="compact" />
               </div>
             </section>
           )}
@@ -208,8 +229,8 @@ export default function Dashboard() {
             <section className="rounded-2xl border border-slate-300 bg-white p-6 shadow-sm">
               <h2 className="text-lg font-semibold text-slate-900">How to run the demo</h2>
               <ol className="mt-2 list-inside list-decimal space-y-1 text-sm text-slate-800">
-                <li>Download and load the BridgeUI extension.</li>
-                <li>Visit eBay or BBC. Click the BridgeUI icon.</li>
+                <li>Download and load the Robyn extension.</li>
+                <li>Visit eBay or BBC. Click the Robyn icon.</li>
                 <li>Preset preferences apply instantly; misclicks will “grow” buttons to 96% success (scripted).</li>
               </ol>
               <p className="mt-3 text-sm text-slate-800">Everything here is hardcoded for a smooth POC. No backend. Local only.</p>
@@ -225,88 +246,12 @@ export default function Dashboard() {
    Controls: Core & per-category
 ----------------------------*/
 
-function CoreControls({ prefs, onChange }: { prefs: BridgePreferences; onChange: (p: BridgePreferences) => void }) {
-  return (
-    <div className="space-y-6">
-      {/* Button size */}
-      <div>
-        <label className="mb-2 block text-sm font-semibold text-slate-900">Button Size (px)</label>
-        <div className="flex items-center gap-4">
-          <input
-            type="range" min={32} max={96} step={1}
-            value={prefs.buttonSize}
-            onChange={(e) => onChange({ ...prefs, buttonSize: Number(e.target.value) })}
-            className="flex-1 accent-purple-600"
-          />
-          <input
-            type="number"
-            value={prefs.buttonSize}
-            onChange={(e) => onChange({ ...prefs, buttonSize: Number(e.target.value) })}
-            className="w-20 rounded-lg border border-slate-300 px-3 py-2 text-center font-semibold text-slate-900"
-          />
-        </div>
-      </div>
-
-      {/* Base font size */}
-      <div>
-        <label className="mb-2 block text-sm font-semibold text-slate-900">Base Font Size (px)</label>
-        <div className="flex items-center gap-4">
-          <input
-            type="range" min={12} max={24} step={1}
-            value={prefs.fontSize}
-            onChange={(e) => onChange({ ...prefs, fontSize: Number(e.target.value) })}
-            className="flex-1 accent-purple-600"
-          />
-          <input
-            type="number"
-            value={prefs.fontSize}
-            onChange={(e) => onChange({ ...prefs, fontSize: Number(e.target.value) })}
-            className="w-20 rounded-lg border border-slate-300 px-3 py-2 text-center font-semibold text-slate-900"
-          />
-        </div>
-      </div>
-
-      {/* Contrast */}
-      <div>
-        <label className="mb-2 block text-sm font-semibold text-slate-900">Contrast Mode</label>
-        <div className="grid grid-cols-3 gap-2">
-          {(['normal', 'high', 'maximum'] as const).map(mode => (
-            <button
-              key={mode}
-              onClick={() => onChange({ ...prefs, contrast: mode })}
-              className={'rounded-xl px-3 py-2 text-sm font-medium capitalize transition ' + (prefs.contrast === mode ? 'bg-purple-600 text-white' : 'bg-slate-100 text-slate-900 hover:bg-slate-200')}
-            >
-              {mode}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Spacing */}
-      <div>
-        <label className="mb-2 block text-sm font-semibold text-slate-900">Element Spacing</label>
-        <div className="grid grid-cols-3 gap-2">
-          {(['compact','default','relaxed'] as const).map(sp => (
-            <button
-              key={sp}
-              onClick={() => onChange({ ...prefs, spacing: sp })}
-              className={'rounded-xl px-3 py-2 text-sm font-medium capitalize transition ' + (prefs.spacing === sp ? 'bg-purple-600 text-white' : 'bg-slate-100 text-slate-900 hover:bg-slate-200')}
-            >
-              {sp}
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function ADHDControls({ prefs, onChange }: { prefs: BridgePreferences; onChange: (p: BridgePreferences) => void }) {
   return (
     <div className="grid gap-4">
-      <ToggleRow label="Reduce motion (limit animations)" value={prefs.reduceMotion} onChange={(v) => onChange({ ...prefs, reduceMotion: v })} />
-      <ToggleRow label="Highlight focused element strongly" value={prefs.focusHighlight} onChange={(v) => onChange({ ...prefs, focusHighlight: v })} />
-      <ToggleRow label="Hide distracting UI (ads/sidebars) in preview" value={prefs.hideDistractingUI} onChange={(v) => onChange({ ...prefs, hideDistractingUI: v })} />
+      <ToggleRow label="Reduce animations" value={prefs.reduceMotion} onChange={(v) => onChange({ ...prefs, reduceMotion: v })} />
+      <ToggleRow label="Highlight key elements" value={prefs.focusHighlight} onChange={(v) => onChange({ ...prefs, focusHighlight: v })} />
+      <ToggleRow label="Hide distracting UI" value={prefs.hideDistractingUI} onChange={(v) => onChange({ ...prefs, hideDistractingUI: v })} />
     </div>
   );
 }
@@ -317,7 +262,7 @@ function DyslexiaControls({ prefs, onChange }: { prefs: BridgePreferences; onCha
       <ToggleRow label="Dyslexia-friendly font" value={prefs.dyslexiaFriendly} onChange={(v) => onChange({ ...prefs, dyslexiaFriendly: v })} />
       <SegmentRow label="Letter spacing" options={['normal','wide'] as const} current={prefs.letterSpacing} onSelect={(v) => onChange({ ...prefs, letterSpacing: v })} />
       <SegmentRow label="Line height" options={['normal','relaxed','loose'] as const} current={prefs.lineHeight} onSelect={(v) => onChange({ ...prefs, lineHeight: v })} />
-      <ToggleRow label="Underline links for readability" value={prefs.underlineLinks} onChange={(v) => onChange({ ...prefs, underlineLinks: v })} />
+      <ToggleRow label="Underline links" value={prefs.underlineLinks} onChange={(v) => onChange({ ...prefs, underlineLinks: v })} />
     </div>
   );
 }
@@ -325,7 +270,6 @@ function DyslexiaControls({ prefs, onChange }: { prefs: BridgePreferences; onCha
 function LowVisionControls({ prefs, onChange }: { prefs: BridgePreferences; onChange: (p: BridgePreferences) => void }) {
   return (
     <div className="grid gap-4">
-      <ToggleRow label="High-visibility focus ring" value={prefs.highVisibilityFocusRing} onChange={(v) => onChange({ ...prefs, highVisibilityFocusRing: v })} />
       <div>
         <label className="mb-2 block text-sm font-semibold text-slate-900">Global zoom</label>
         <div className="flex items-center gap-4">
@@ -349,9 +293,9 @@ function MotorControls({ prefs, onChange }: { prefs: BridgePreferences; onChange
   return (
     <div className="grid gap-4">
       <ToggleRow label="Enlarge interactive targets" value={prefs.enlargeInteractive} onChange={(v) => onChange({ ...prefs, enlargeInteractive: v })} />
-      <ToggleRow label="Extra gap between buttons/links" value={prefs.extraButtonGap} onChange={(v) => onChange({ ...prefs, extraButtonGap: v })} />
-      <ToggleRow label="Simulate dwell click (long press)" value={prefs.dwellClickSim} onChange={(v) => onChange({ ...prefs, dwellClickSim: v })} />
-      <ToggleRow label="Hands-free mode (show large Voice/CTA)" value={prefs.handsFreeMode} onChange={(v) => onChange({ ...prefs, handsFreeMode: v })} />
+      <ToggleRow label="Increase button spacing" value={prefs.extraButtonGap} onChange={(v) => onChange({ ...prefs, extraButtonGap: v })} />
+      <ToggleRow label="Enable dwell click" value={prefs.dwellClickSim} onChange={(v) => onChange({ ...prefs, dwellClickSim: v })} />
+      <ToggleRow label="Hands-free mode" value={prefs.handsFreeMode} onChange={(v) => onChange({ ...prefs, handsFreeMode: v })} />
     </div>
   );
 }
