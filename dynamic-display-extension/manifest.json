@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "Website Interaction Tracker for Statsig",
+  "version": "1.0",
+  "description": "Tracks user interactions on a specific website and logs them to Statsig.",
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://statsigapi.net/*",
+    "https://api.statsig.com/*",
+    "https://generativelanguage.googleapis.com/*",
+    "https://*/*",
+    "http://*/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["contentScript.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ]
+}
