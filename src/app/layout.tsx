@@ -2,8 +2,8 @@
 import './globals.css';
 
 export const metadata = {
-  title: 'Robyn',
-  description: 'Demo-only frontend for Robyn',
+  title: 'Chameleon',
+  description: 'Demo-only frontend for Chameleon',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
