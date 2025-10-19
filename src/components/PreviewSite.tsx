@@ -239,6 +239,7 @@ export default function PreviewSite({
             position: 'relative',
             zIndex: 1,
             padding: '1rem',
+            paddingTop: '3rem',
           }}
         >
           {/* Header with navigation menu */}
@@ -296,10 +297,36 @@ export default function PreviewSite({
                 </a>
               </div>
               <div className="w-1/2">
-                {/* This would be where the toy box image would go */}
-                <div className="h-40 flex items-center justify-center">
-                  <div className="w-32 h-32 bg-blue-900 rounded-lg flex items-center justify-center">
-                    <span className="text-white">Toy Box</span>
+                {/* Animated Toy Box */}
+                <div className="h-40 flex items-center justify-center relative">
+                  <div className="relative">
+                    {/* Main toy box */}
+                    <div className="w-32 h-32 bg-gradient-to-b from-amber-600 to-amber-800 rounded-lg shadow-lg border-2 border-amber-700 relative overflow-hidden">
+                      {/* Toy box lid */}
+                      <div className="absolute top-0 left-0 w-full h-6 bg-gradient-to-b from-amber-500 to-amber-600 rounded-t-lg border-b-2 border-amber-700"></div>
+                      
+                      {/* Toys inside the box */}
+                      <div className="absolute inset-0 p-2">
+                        {/* Teddy bear */}
+                        <div className="absolute bottom-2 left-2 w-6 h-6 bg-amber-300 rounded-full toy-float" style={{ animationDelay: '0s' }}></div>
+                        
+                        {/* Ball */}
+                        <div className="absolute bottom-4 right-3 w-4 h-4 bg-red-400 rounded-full toy-wiggle" style={{ animationDelay: '1s' }}></div>
+                        
+                        {/* Block */}
+                        <div className="absolute top-4 left-4 w-5 h-5 bg-blue-400 rounded-sm toy-pop" style={{ animationDelay: '2s' }}></div>
+                      </div>
+                    </div>
+                    
+                    {/* Toys moving out of the box */}
+                    <div className="absolute -top-2 -right-2 w-8 h-8 bg-pink-300 rounded-full toy-float" style={{ animationDelay: '0.5s' }}></div>
+                    <div className="absolute -bottom-1 -left-1 w-6 h-6 bg-green-400 rounded-full toy-wiggle" style={{ animationDelay: '1.5s' }}></div>
+                    <div className="absolute top-4 -left-3 w-5 h-5 bg-yellow-300 rounded-sm toy-pop" style={{ animationDelay: '2.5s' }}></div>
+                    <div className="absolute -top-4 left-4 w-4 h-4 bg-purple-400 rounded-full toy-float" style={{ animationDelay: '3s' }}></div>
+                    
+                    {/* Additional floating toys */}
+                    <div className="absolute -right-6 top-8 w-5 h-5 bg-orange-400 rounded-full toy-wiggle" style={{ animationDelay: '1s' }}></div>
+                    <div className="absolute -left-6 bottom-8 w-6 h-6 bg-cyan-400 rounded-full toy-float" style={{ animationDelay: '2.2s' }}></div>
                   </div>
                 </div>
               </div>
@@ -309,32 +336,53 @@ export default function PreviewSite({
 
         {/* Add the MLH badge to the top right corner */}
         <div className="absolute top-0 right-0 z-10">
-          <div className="bg-slate-800 text-white p-2 rounded-bl-lg flex flex-col items-center">
-            <div className="text-xs font-bold mb-1">MLH</div>
+          <div className="bg-slate-800 text-white p-1 rounded-bl-lg flex flex-col items-center">
+            <div className="text-xs font-bold mb-0.5">MLH</div>
             <div className="text-xs font-bold">OFFICIAL</div>
-            <div className="mt-2 text-xs font-bold">2025</div>
+            <div className="mt-1 text-xs font-bold">2025</div>
             <div className="text-xs">SEASON</div>
           </div>
         </div>
 
-        {/* Add toy images */}
-        <div className="absolute bottom-0 right-0 z-10">
-          <div className="flex items-end">
-            <div className="w-16 h-16 bg-green-500 rounded-full mr-2 mb-2"></div>
-            <div className="w-12 h-12 bg-red-400 rounded-full mr-2"></div>
-          </div>
-        </div>
-        
-        {/* Beach ball in bottom left */}
-        <div className="absolute bottom-0 left-0 z-10">
-          <div className="w-16 h-16 bg-gradient-to-r from-blue-400 to-red-400 rounded-full mb-2 ml-2"></div>
-        </div>
       </div>
 
       <style jsx>{`
         /* Global motion control inside preview */
         div :global(*) {
           transition: ${prefs.reduceMotion ? 'none' : 'all 160ms ease'};
+        }
+
+        /* Custom toy box animations */
+        @keyframes toyFloat {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          25% { transform: translateY(-8px) rotate(2deg); }
+          50% { transform: translateY(-4px) rotate(-1deg); }
+          75% { transform: translateY(-12px) rotate(1deg); }
+        }
+
+        @keyframes toyWiggle {
+          0%, 100% { transform: translateX(0px) rotate(0deg); }
+          25% { transform: translateX(3px) rotate(1deg); }
+          50% { transform: translateX(-2px) rotate(-1deg); }
+          75% { transform: translateX(4px) rotate(0.5deg); }
+        }
+
+        @keyframes toyPop {
+          0%, 100% { transform: scale(1) translateY(0px); }
+          50% { transform: scale(1.1) translateY(-6px); }
+        }
+
+        /* Apply custom animations to toys */
+        .toy-float {
+          animation: ${prefs.reduceMotion ? 'none' : 'toyFloat 4s ease-in-out infinite'};
+        }
+
+        .toy-wiggle {
+          animation: ${prefs.reduceMotion ? 'none' : 'toyWiggle 3s ease-in-out infinite'};
+        }
+
+        .toy-pop {
+          animation: ${prefs.reduceMotion ? 'none' : 'toyPop 2.5s ease-in-out infinite'};
         }
 
         /* Shared interactive primitives driven by CSS variables */

@@ -314,7 +314,7 @@ function ADHDControls({ prefs, onChange }: { prefs: BridgePreferences; onChange:
 function DyslexiaControls({ prefs, onChange }: { prefs: BridgePreferences; onChange: (p: BridgePreferences) => void }) {
   return (
     <div className="grid gap-4">
-      <ToggleRow label="Dyslexia-friendly text (weight + smoothing)" value={prefs.dyslexiaFriendly} onChange={(v) => onChange({ ...prefs, dyslexiaFriendly: v })} />
+      <ToggleRow label="Dyslexia-friendly font" value={prefs.dyslexiaFriendly} onChange={(v) => onChange({ ...prefs, dyslexiaFriendly: v })} />
       <SegmentRow label="Letter spacing" options={['normal','wide'] as const} current={prefs.letterSpacing} onSelect={(v) => onChange({ ...prefs, letterSpacing: v })} />
       <SegmentRow label="Line height" options={['normal','relaxed','loose'] as const} current={prefs.lineHeight} onSelect={(v) => onChange({ ...prefs, lineHeight: v })} />
       <ToggleRow label="Underline links for readability" value={prefs.underlineLinks} onChange={(v) => onChange({ ...prefs, underlineLinks: v })} />
