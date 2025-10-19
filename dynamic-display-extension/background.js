@@ -1,6 +1,12 @@
 // This script requires the Statsig JS SDK. You must download 'statsig.min.js'
 // and place it in the same directory as this file.
 try {
+  // Load generated config (defines self.__DDE_CONFIG)
+  importScripts("config.js");
+} catch (_e) {
+  // ok if missing; we'll fall back to defaults below
+}
+try {
   importScripts("statsig-js-client.min.js");
 } catch (e) {
   console.error(
@@ -10,11 +16,10 @@ try {
 }
 
 // --- CONFIGURATION ---
-// Replace with your actual Statsig Client Key
-const STATSIG_CLIENT_KEY = "client-EY065Cuo3EDACcYQrx4imSz6mINhMpnVNcER9jXdKVf";
-// Optional: Gemini API key for image descriptions
-const GEMINI_API_KEY = "AIzaSyAxJumE7TZ3BI2A5ikz7au7tUWsw6k6c2w"; // set your key here
-const GEMINI_MODEL = "models/gemini-2.0-flash-exp"; // or a stable flash model name
+const __cfg = (typeof self !== "undefined" && self.__DDE_CONFIG) || {};
+const STATSIG_CLIENT_KEY = __cfg.STATSIG_CLIENT_KEY || "";
+const GEMINI_API_KEY = __cfg.GEMINI_API_KEY || ""; // leave blank to disable DESCRIBE_IMAGE
+const GEMINI_MODEL = __cfg.GEMINI_MODEL || "models/gemini-2.0-flash-exp"; // default model
 
 /**
  * Retrieves a stable user ID from chrome.storage.local.

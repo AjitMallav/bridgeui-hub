@@ -11,33 +11,47 @@ This extension requires the Statsig JavaScript SDK to function.
 1.  Download the minified SDK file from the official CDN: [https://cdn.jsdelivr.net/npm/statsig-js/build/statsig.min.js](https://cdn.jsdelivr.net/npm/statsig-js/build/statsig.min.js)
 2.  Save this file as `statsig.min.js` in the same root directory as the other extension files.
 
-### Step 2: Configure the Extension
+### Step 2: Configure Secrets (no hardcoded keys)
 
-You need to edit three lines of code to make the extension work for your use case.
+Do NOT hardcode API keys. The background script reads a generated `config.js` that is ignored by git.
+
+- Copy `config.example.js` to `config.js` and fill in your keys:
+
+```
+cp config.example.js config.js
+```
+
+Or generate `config.js` from a `.env` at repo root or `dynamic-display-extension/.env`:
+
+```
+npm run ext:make-config
+```
+
+Keys used:
+
+- `STATSIG_CLIENT_KEY` (required)
+- `GEMINI_API_KEY` (optional; enables image descriptions)
+- `GEMINI_MODEL` (optional; defaults to `models/gemini-2.0-flash-exp`)
+
+### Step 3: Configure Tracking
 
 1.  **`manifest.json`**:
 
-    - Find the `matches` key inside `content_scripts`.
-    - Change `"https://www.the-website-to-track.com/*"` to the URL of the website you want to track.
+    - Adjust `content_scripts.matches` to the sites you want to track.
 
-2.  **`background.js`**:
-
-    - Find the line `const STATSIG_CLIENT_KEY = 'YOUR_STATSIG_CLIENT_KEY';`.
-    - Replace `'YOUR_STATSIG_CLIENT_KEY'` with your actual Client Key from the Statsig console.
-
-3.  **`contentScript.js`**:
+2.  **`contentScript.js`**:
     - **This is the most important step.** This file determines what to track.
     - Delete the example `trackElement(...)` calls.
     - For each element you want to track, add a new `trackElement()` call with the correct CSS selector and a descriptive event name. Use your browser's DevTools (Right-click -> Inspect) on the target website to find the best selectors.
 
-### Step 3: Load the Extension in Chrome
+### Step 4: Load the Extension in Chrome
 
 1.  Open Chrome and navigate to `chrome://extensions`.
 2.  Enable "Developer mode" using the toggle in the top-right corner.
 3.  Click the "Load unpacked" button.
 4.  Select the folder containing your extension's files (`manifest.json`, etc.).
 
-### Step 4: Verify It's Working
+### Step 5: Verify It's Working
 
 1.  Navigate to the website you configured in `manifest.json`.
 2.  Open the DevTools (**F12** or **Cmd+Option+I**).
