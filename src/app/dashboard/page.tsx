@@ -107,8 +107,8 @@ export default function Dashboard() {
 
   function downloadZip() {
     const a = document.createElement("a");
-    a.href = "/downloads/robyn-extension.zip";
-    a.download = "robyn-extension.zip";
+    a.href = "/downloads/chameleon-extension.zip";
+    a.download = "chameleon-extension.zip";
     a.rel = "noopener";
     document.body.appendChild(a);
     a.click();
@@ -153,7 +153,7 @@ export default function Dashboard() {
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-purple-600 to-blue-600 text-white text-sm font-bold">
               R
             </div>
-            <span className="text-2xl font-bold text-gray-800">Robyn</span>
+            <span className="text-2xl font-bold text-gray-800">Chameleon</span>
           </div>
 
           <div className="flex items-center gap-3">
@@ -244,7 +244,7 @@ export default function Dashboard() {
                   <li>
                     Open extension Options → set <b>Hub URL</b> and <b>Token</b>
                   </li>
-                  <li>Visit any website → enable Robyn</li>
+                  <li>Visit any website → enable Chameleon</li>
                 </ol>
               </div>
 
@@ -397,7 +397,7 @@ export default function Dashboard() {
                 <h3 className="mb-3 text-sm font-semibold text-slate-900">
                   Live Preview
                 </h3>
-                <div className="overflow-hidden rounded-lg border border-slate-200 bg-slate-50 p-4">
+                <div className="overflow-hidden mx-auto">
                   <BridgePreview prefs={p} variant="compact" />
                 </div>
               </div>
@@ -416,7 +416,9 @@ export default function Dashboard() {
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-purple-600 to-blue-600 text-white text-sm font-bold">
                   R
                 </div>
-                <span className="text-lg font-bold text-gray-800">Robyn</span>
+                <span className="text-lg font-bold text-gray-800">
+                  Chameleon
+                </span>
               </div>
               <p className="text-xs text-slate-600">
                 Making the web accessible for everyone through adaptive
@@ -457,7 +459,7 @@ export default function Dashboard() {
                 Contact
               </h3>
               <ul className="space-y-1 text-xs text-slate-600">
-                <li>Email: support@robyn.ai</li>
+                <li>Email: support@chameleon.ai</li>
                 <li>
                   GitHub:{" "}
                   <a
@@ -471,10 +473,6 @@ export default function Dashboard() {
                 </li>
               </ul>
             </div>
-          </div>
-
-          <div className="mt-6 border-t border-slate-200 pt-4 text-center text-xs text-slate-500">
-            © {new Date().getFullYear()} Robyn. All rights reserved.
           </div>
         </div>
       </footer>
@@ -526,7 +524,7 @@ function HelpGuides() {
           Accessibility Categories Guide
         </h2>
         <p className="text-sm text-slate-600">
-          Understanding your accessibility needs helps you configure Robyn
+          Understanding your accessibility needs helps you configure Chameleon
           effectively. Below are detailed guides for each category.
         </p>
       </div>
@@ -717,8 +715,8 @@ function HelpGuides() {
             to start over.
           </li>
           <li>
-            Settings are saved locally in your browser and sync with the Robyn
-            extension automatically.
+            Settings are saved locally in your browser and sync with the
+            Chameleon extension automatically.
           </li>
         </ul>
       </div>
