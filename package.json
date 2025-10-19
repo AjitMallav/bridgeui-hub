@@ -3,10 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "prebuild": "node scripts/zip-extension.js",
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "ext:make-config": "node scripts/generate-extension-config.js",
+    "ext:zip": "node scripts/zip-extension.js",
+    "ext:zip-private": "node scripts/zip-extension-private.js"
   },
   "dependencies": {
     "lucide-react": "^0.546.0",
