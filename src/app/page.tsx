@@ -13,7 +13,7 @@ export default function Landing() {
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-purple-600 to-blue-600 text-white font-bold">
               R
             </div>
-            <span className="text-2xl font-bold text-gray-800">Robyn</span>
+            <span className="text-2xl font-bold text-gray-800">Chameleon</span>
           </div>
           <Link
             href="/login"
@@ -35,7 +35,7 @@ export default function Landing() {
             </span>
           </h1>
           <p className="mx-auto mb-8 max-w-3xl text-xl text-gray-600">
-            Robyn uses AI to dynamically adjust websites to match your needs.
+            Chameleon uses AI to dynamically adjust websites to match your needs.
             Set your preferences once, and watch the web adapt to you.
           </p>
           <Link
