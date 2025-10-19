@@ -12,7 +12,7 @@ import {
   Sliders,
   Info,
   RotateCcw,
-  Send,
+  Send
 } from "lucide-react";
 import {
   requireUserOrRedirect,
@@ -20,7 +20,7 @@ import {
   logoutUser,
   type DemoUser,
   DEFAULT_PREFS,
-  type BridgePreferences,
+  type BridgePreferences
 } from "@/lib/demoAuth";
 
 type Tab = "overview" | "profile" | "guide";
@@ -35,26 +35,26 @@ const CONDITIONS: Array<{
     id: "adhd",
     name: "ADHD",
     icon: Brain,
-    description: "Reduce motion, emphasize focus, and hide distractions.",
+    description: "Reduce motion, emphasize focus, and hide distractions."
   },
   {
     id: "dyslexia",
     name: "Dyslexia",
     icon: Brain,
-    description: "Improve readability with spacing and link affordances.",
+    description: "Improve readability with spacing and link affordances."
   },
   {
     id: "low-vision",
     name: "Low Vision",
     icon: Eye,
-    description: "Increase contrast, text size, focus visibility, and zoom.",
+    description: "Increase contrast, text size, focus visibility, and zoom."
   },
   {
     id: "motor-control",
-    name: "Motor Control Difficulties",
+    name: "Motor Impairment",
     icon: Sliders,
-    description: "Bigger targets, extra spacing, dwell-click, hands-free.",
-  },
+    description: "Bigger targets, extra spacing, dwell-click, hands-free."
+  }
 ];
 
 export default function Dashboard() {
@@ -67,7 +67,7 @@ export default function Dashboard() {
     if (u) {
       const merged: DemoUser = {
         ...u,
-        preferences: { ...DEFAULT_PREFS, ...u.preferences },
+        preferences: { ...DEFAULT_PREFS, ...u.preferences }
       };
       setU(merged);
       persistUser(merged);
@@ -81,8 +81,8 @@ export default function Dashboard() {
       ...patch,
       preferences: {
         ...user.preferences,
-        ...(patch.preferences ?? {}),
-      },
+        ...(patch.preferences ?? {})
+      }
     };
     persistUser(next);
     setU(next);
@@ -92,7 +92,7 @@ export default function Dashboard() {
     if (!user) return;
     save({
       conditions: [],
-      preferences: DEFAULT_PREFS,
+      preferences: DEFAULT_PREFS
     });
   }
 
@@ -100,7 +100,7 @@ export default function Dashboard() {
     if (!user) return;
     const has = user.conditions.includes(id);
     const nextConditions = has
-      ? user.conditions.filter((c) => c !== id)
+      ? user.conditions.filter(c => c !== id)
       : [...user.conditions, id];
     save({ conditions: nextConditions });
   }
@@ -117,15 +117,36 @@ export default function Dashboard() {
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
-    // hook up to your help search later
-    console.log("Search:", searchQuery);
+    // Submit behavior: clear input, toggle key switches, and set spacing prefs
+    if (!user) return;
+    // Clear input as if submitted
+    setSearchQuery("");
+
+    // Toggle Reduce animations + Dyslexia-friendly font
+    const current = user.preferences;
+    // Ensure ADHD and Dyslexia categories are selected
+    const nextConditions = Array.from(
+      new Set([...(user.conditions || []), "adhd", "dyslexia"])
+    );
+    save({
+      conditions: nextConditions,
+      preferences: {
+        ...current,
+        reduceMotion: !current.reduceMotion,
+        dyslexiaFriendly: !current.dyslexiaFriendly,
+        letterSpacing: "wide",
+        lineHeight: "loose"
+      }
+    });
   }
 
   if (!user) return null;
   const p = user.preferences;
 
   return (
-    <div className="min-h-dvh bg-gradient-to-br from-purple-50 via-white to-blue-50 flex flex-col">      {/* Header */}
+    <div className="min-h-dvh bg-gradient-to-br from-purple-50 via-white to-blue-50 flex flex-col">
+      {" "}
+      {/* Header */}
       <nav className="bg-white shadow-sm border-b border-slate-200">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
           <div className="flex items-center gap-2">
@@ -180,7 +201,6 @@ export default function Dashboard() {
           </div>
         </div>
       </nav>
-
       {/* Content */}
       <div className="mx-auto max-w-6xl px-5 py-6">
         {tab === "overview" && (
@@ -250,7 +270,7 @@ export default function Dashboard() {
                 <input
                   type="text"
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={e => setSearchQuery(e.target.value)}
                   placeholder="Ask me anything about accessibility settings..."
                   className="w-full px-4 py-3 pr-11 text-sm text-slate-900 placeholder-slate-400 focus:outline-none"
                 />
@@ -343,33 +363,25 @@ export default function Dashboard() {
                             {id === "adhd" && (
                               <ADHDControls
                                 prefs={p}
-                                onChange={(prefs) =>
-                                  save({ preferences: prefs })
-                                }
+                                onChange={prefs => save({ preferences: prefs })}
                               />
                             )}
                             {id === "dyslexia" && (
                               <DyslexiaControls
                                 prefs={p}
-                                onChange={(prefs) =>
-                                  save({ preferences: prefs })
-                                }
+                                onChange={prefs => save({ preferences: prefs })}
                               />
                             )}
                             {id === "low-vision" && (
                               <LowVisionControls
                                 prefs={p}
-                                onChange={(prefs) =>
-                                  save({ preferences: prefs })
-                                }
+                                onChange={prefs => save({ preferences: prefs })}
                               />
                             )}
                             {id === "motor-control" && (
                               <MotorControls
                                 prefs={p}
-                                onChange={(prefs) =>
-                                  save({ preferences: prefs })
-                                }
+                                onChange={prefs => save({ preferences: prefs })}
                               />
                             )}
                           </div>
@@ -393,11 +405,8 @@ export default function Dashboard() {
           </section>
         )}
 
-        {tab === "guide" && (
-          <HelpGuides />
-        )}
+        {tab === "guide" && <HelpGuides />}
       </div>
-
       {/* Footer */}
       <footer className="mt-auto border-t border-slate-200 bg-white text-sm">
         <div className="mx-auto max-w-7xl px-4 py-3">
@@ -480,7 +489,7 @@ function TabLink({
   children,
   icon,
   active,
-  onClick,
+  onClick
 }: {
   children: React.ReactNode;
   icon?: React.ReactNode;
@@ -524,81 +533,164 @@ function HelpGuides() {
 
       {/* ADHD */}
       <div className="rounded-xl border border-purple-300 bg-purple-50 p-5 shadow-sm">
-        <GuideHeader icon={<Brain className="text-purple-700" size={20} />} title="ADHD (Attention Deficit Hyperactivity Disorder)" />
+        <GuideHeader
+          icon={<Brain className="text-purple-700" size={20} />}
+          title="ADHD (Attention Deficit Hyperactivity Disorder)"
+        />
         <Severity
           items={[
-            ["Mild", "Occasional difficulty focusing, easily distracted by animations or pop-ups"],
-            ["Moderate", "Frequent loss of focus, struggle to complete tasks with visual clutter"],
-            ["Severe", "Extreme difficulty maintaining attention, overwhelmed by multiple UI elements"],
+            [
+              "Mild",
+              "Occasional difficulty focusing, easily distracted by animations or pop-ups"
+            ],
+            [
+              "Moderate",
+              "Frequent loss of focus, struggle to complete tasks with visual clutter"
+            ],
+            [
+              "Severe",
+              "Extreme difficulty maintaining attention, overwhelmed by multiple UI elements"
+            ]
           ]}
         />
         <Recs
           color="purple"
           items={[
-            ["Reduce animations", "Minimizes motion and transitions that can be distracting. Essential for moderate to severe ADHD."],
-            ["Highlight key elements", "Emphasizes important content and actions. Helps direct focus to relevant information."],
-            ["Hide distracting UI", "Removes ads, sidebars, and non-essential elements. Critical for severe ADHD or high distractibility."],
+            [
+              "Reduce animations",
+              "Minimizes motion and transitions that can be distracting. Essential for moderate to severe ADHD."
+            ],
+            [
+              "Hide distracting UI",
+              "Removes ads, sidebars, and non-essential elements. Critical for severe ADHD or high distractibility."
+            ]
           ]}
         />
       </div>
 
       {/* Dyslexia */}
       <div className="rounded-xl border border-blue-300 bg-blue-50 p-5 shadow-sm">
-        <GuideHeader icon={<Brain className="text-blue-700" size={20} />} title="Dyslexia" />
+        <GuideHeader
+          icon={<Brain className="text-blue-700" size={20} />}
+          title="Dyslexia"
+        />
         <Severity
           items={[
-            ["Mild", "Occasional letter reversal, slow reading with standard fonts"],
-            ["Moderate", "Difficulty tracking lines, frequent re-reading, confusion with similar-looking letters"],
-            ["Severe", "Significant reading challenges, extreme difficulty with dense text blocks"],
+            [
+              "Mild",
+              "Occasional letter reversal, slow reading with standard fonts"
+            ],
+            [
+              "Moderate",
+              "Difficulty tracking lines, frequent re-reading, confusion with similar-looking letters"
+            ],
+            [
+              "Severe",
+              "Significant reading challenges, extreme difficulty with dense text blocks"
+            ]
           ]}
         />
         <Recs
           color="blue"
           items={[
-            ["Dyslexia-friendly font", "Uses OpenDyslexic or similar fonts to reduce letter confusion. Beneficial for all severity levels."],
-            ["Letter spacing (Wide)", "Increases space between letters to improve readability. Recommended for moderate to severe dyslexia."],
-            ["Line height (Relaxed/Loose)", "Adds vertical spacing to prevent line-jumping. Essential for moderate to severe cases."],
-            ["Underline links", "Makes clickable elements more obvious. Helpful for all severity levels to improve navigation."],
+            [
+              "Dyslexia-friendly font",
+              "Uses OpenDyslexic or similar fonts to reduce letter confusion. Beneficial for all severity levels."
+            ],
+            [
+              "Letter spacing (Wide)",
+              "Increases space between letters to improve readability. Recommended for moderate to severe dyslexia."
+            ],
+            [
+              "Line height (Relaxed/Loose)",
+              "Adds vertical spacing to prevent line-jumping. Essential for moderate to severe cases."
+            ],
+            [
+              "Underline links",
+              "Makes clickable elements more obvious. Helpful for all severity levels to improve navigation."
+            ]
           ]}
         />
       </div>
 
       {/* Low Vision */}
       <div className="rounded-xl border border-amber-300 bg-amber-50 p-5 shadow-sm">
-        <GuideHeader icon={<Eye className="text-amber-700" size={20} />} title="Low Vision" />
+        <GuideHeader
+          icon={<Eye className="text-amber-700" size={20} />}
+          title="Low Vision"
+        />
         <Severity
           items={[
-            ["Mild", "Need reading glasses, slight difficulty with small text or low contrast"],
-            ["Moderate", "Significant vision impairment, need magnification, struggle with standard text sizes"],
-            ["Severe", "Legal blindness or near-blindness, require maximum zoom and contrast"],
+            [
+              "Mild",
+              "Need reading glasses, slight difficulty with small text or low contrast"
+            ],
+            [
+              "Moderate",
+              "Significant vision impairment, need magnification, struggle with standard text sizes"
+            ],
+            [
+              "Severe",
+              "Legal blindness or near-blindness, require maximum zoom and contrast"
+            ]
           ]}
         />
         <Recs
           color="amber"
           items={[
-            ["Global zoom (1.0x - 1.4x)", "Mild: 1.0x–1.15x • Moderate: 1.15x–1.3x • Severe: 1.3x–1.4x"],
-            ["Contrast levels", "Normal: standard • High: moderate loss • Maximum: severe impairment (stark b/w)"],
+            [
+              "Global zoom (1.0x - 1.4x)",
+              "Mild: 1.0x–1.15x • Moderate: 1.15x–1.3x • Severe: 1.3x–1.4x"
+            ],
+            [
+              "Contrast levels",
+              "Normal: standard • High: moderate loss • Maximum: severe impairment (stark b/w)"
+            ]
           ]}
         />
       </div>
 
       {/* Motor Control */}
       <div className="rounded-xl border border-green-300 bg-green-50 p-5 shadow-sm">
-        <GuideHeader icon={<Sliders className="text-green-700" size={20} />} title="Motor Control Difficulties" />
+        <GuideHeader
+          icon={<Sliders className="text-green-700" size={20} />}
+          title="Motor Impairment"
+        />
         <Severity
           items={[
-            ["Mild", "Occasional tremors, difficulty with small targets, minor clicking issues"],
-            ["Moderate", "Consistent hand tremors, frequent misclicks, struggle with closely-spaced buttons"],
-            ["Severe", "Limited hand control, inability to use traditional mouse, need alternative input methods"],
+            [
+              "Mild",
+              "Occasional tremors, difficulty with small targets, minor clicking issues"
+            ],
+            [
+              "Moderate",
+              "Consistent hand tremors, frequent misclicks, struggle with closely-spaced buttons"
+            ],
+            [
+              "Severe",
+              "Limited hand control, inability to use traditional mouse, need alternative input methods"
+            ]
           ]}
         />
         <Recs
           color="green"
           items={[
-            ["Enlarge interactive targets", "Makes buttons and links bigger and easier to click. Essential for moderate–severe tremors."],
-            ["Increase button spacing", "Adds space between interactive elements to prevent accidental clicks."],
-            ["Enable dwell click", "Activates elements by hovering instead of clicking."],
-            ["Hands-free mode", "Enables voice control or alt input—critical for severe impairment."],
+            [
+              "Enlarge interactive targets",
+              "Makes buttons and links bigger and easier to click. Essential for moderate–severe tremors."
+            ],
+            [
+              "Increase button spacing",
+              "Adds space between interactive elements to prevent accidental clicks."
+            ],
+            [
+              "Enable dwell click",
+              "Activates elements by hovering instead of clicking."
+            ],
+            [
+              "Hands-free mode",
+              "Enables voice control or alt input—critical for severe impairment."
+            ]
           ]}
         />
       </div>
@@ -634,20 +726,24 @@ function HelpGuides() {
   );
 }
 
-function GuideHeader({ icon, title }: { icon: React.ReactNode; title: string }) {
+function GuideHeader({
+  icon,
+  title
+}: {
+  icon: React.ReactNode;
+  title: string;
+}) {
   return (
     <div className="mb-3 flex items-center gap-3">
-      <div className="grid h-9 w-9 place-items-center rounded-lg bg-white/70">{icon}</div>
+      <div className="grid h-9 w-9 place-items-center rounded-lg bg-white/70">
+        {icon}
+      </div>
       <h3 className="text-base font-semibold text-slate-900">{title}</h3>
     </div>
   );
 }
 
-function Severity({
-  items,
-}: {
-  items: Array<[label: string, text: string]>;
-}) {
+function Severity({ items }: { items: Array<[label: string, text: string]> }) {
   return (
     <div className="mb-3">
       <h4 className="mb-1 text-sm font-semibold text-slate-900">
@@ -666,7 +762,7 @@ function Severity({
 
 function Recs({
   color,
-  items,
+  items
 }: {
   color: "purple" | "blue" | "amber" | "green";
   items: Array<[title: string, desc: string]>;
@@ -675,23 +771,20 @@ function Recs({
     purple: "border-purple-200",
     blue: "border-blue-200",
     amber: "border-amber-200",
-    green: "border-green-200",
+    green: "border-green-200"
   }[color];
 
   const title = {
     purple: "text-purple-900",
     blue: "text-blue-900",
     amber: "text-amber-900",
-    green: "text-green-900",
+    green: "text-green-900"
   }[color];
 
   return (
     <div className="grid gap-2 sm:grid-cols-2">
       {items.map(([t, d], i) => (
-        <div
-          key={i}
-          className={`rounded-lg border ${border} bg-white p-3`}
-        >
+        <div key={i} className={`rounded-lg border ${border} bg-white p-3`}>
           <div className={`mb-1 text-xs font-semibold ${title}`}>{t}</div>
           <p className="text-xs text-slate-600">{d}</p>
         </div>
@@ -705,7 +798,7 @@ function Recs({
 ----------------------------*/
 function ADHDControls({
   prefs,
-  onChange,
+  onChange
 }: {
   prefs: BridgePreferences;
   onChange: (p: BridgePreferences) => void;
@@ -715,17 +808,12 @@ function ADHDControls({
       <ToggleRow
         label="Reduce animations"
         value={prefs.reduceMotion}
-        onChange={(v) => onChange({ ...prefs, reduceMotion: v })}
-      />
-      <ToggleRow
-        label="Highlight key elements"
-        value={prefs.focusHighlight}
-        onChange={(v) => onChange({ ...prefs, focusHighlight: v })}
+        onChange={v => onChange({ ...prefs, reduceMotion: v })}
       />
       <ToggleRow
         label="Hide distracting UI"
         value={prefs.hideDistractingUI}
-        onChange={(v) => onChange({ ...prefs, hideDistractingUI: v })}
+        onChange={v => onChange({ ...prefs, hideDistractingUI: v })}
       />
     </div>
   );
@@ -733,7 +821,7 @@ function ADHDControls({
 
 function DyslexiaControls({
   prefs,
-  onChange,
+  onChange
 }: {
   prefs: BridgePreferences;
   onChange: (p: BridgePreferences) => void;
@@ -743,24 +831,24 @@ function DyslexiaControls({
       <ToggleRow
         label="Dyslexia-friendly font"
         value={prefs.dyslexiaFriendly}
-        onChange={(v) => onChange({ ...prefs, dyslexiaFriendly: v })}
+        onChange={v => onChange({ ...prefs, dyslexiaFriendly: v })}
       />
       <SegmentRow
         label="Letter spacing"
         options={["normal", "wide"] as const}
         current={prefs.letterSpacing}
-        onSelect={(v) => onChange({ ...prefs, letterSpacing: v })}
+        onSelect={v => onChange({ ...prefs, letterSpacing: v })}
       />
       <SegmentRow
         label="Line height"
         options={["normal", "relaxed", "loose"] as const}
         current={prefs.lineHeight}
-        onSelect={(v) => onChange({ ...prefs, lineHeight: v })}
+        onSelect={v => onChange({ ...prefs, lineHeight: v })}
       />
       <ToggleRow
         label="Underline links"
         value={prefs.underlineLinks}
-        onChange={(v) => onChange({ ...prefs, underlineLinks: v })}
+        onChange={v => onChange({ ...prefs, underlineLinks: v })}
       />
     </div>
   );
@@ -768,7 +856,7 @@ function DyslexiaControls({
 
 function LowVisionControls({
   prefs,
-  onChange,
+  onChange
 }: {
   prefs: BridgePreferences;
   onChange: (p: BridgePreferences) => void;
@@ -786,7 +874,7 @@ function LowVisionControls({
             max={1.4}
             step={0.05}
             value={prefs.globalZoom}
-            onChange={(e) =>
+            onChange={e =>
               onChange({ ...prefs, globalZoom: Number(e.target.value) })
             }
             className="flex-1 accent-purple-600"
@@ -800,7 +888,7 @@ function LowVisionControls({
         label="Contrast"
         options={["normal", "high", "maximum"] as const}
         current={prefs.contrast}
-        onSelect={(v) => onChange({ ...prefs, contrast: v })}
+        onSelect={v => onChange({ ...prefs, contrast: v })}
       />
     </div>
   );
@@ -815,15 +903,31 @@ function MotorControls({
 }) {
   return (
     <div className="space-y-2">
-      <ToggleRow label="Enlarge interactive targets" value={prefs.enlargeInteractive} onChange={(v) => onChange({ ...prefs, enlargeInteractive: v })} />
-      <ToggleRow label="Increase button spacing" value={prefs.extraButtonGap} onChange={(v) => onChange({ ...prefs, extraButtonGap: v })} />
-      <ToggleRow label="Enable dwell click" value={prefs.dwellClickSim} onChange={(v) => onChange({ ...prefs, dwellClickSim: v })} />
-      <ToggleRow label="Hands-free mode" value={prefs.handsFreeMode} onChange={(v) => onChange({ ...prefs, handsFreeMode: v })} />
+      <ToggleRow
+        label="Enlarge interactive targets"
+        value={prefs.enlargeInteractive}
+        onChange={v => onChange({ ...prefs, enlargeInteractive: v })}
+      />
+      <ToggleRow
+        label="Increase button spacing"
+        value={prefs.extraButtonGap}
+        onChange={v => onChange({ ...prefs, extraButtonGap: v })}
+      />
+      <ToggleRow
+        label="Enable dwell click"
+        value={prefs.dwellClickSim}
+        onChange={v => onChange({ ...prefs, dwellClickSim: v })}
+      />
+      <ToggleRow
+        label="Hands-free mode"
+        value={prefs.handsFreeMode}
+        onChange={v => onChange({ ...prefs, handsFreeMode: v })}
+      />
 
       {/* ✅ Show button when hands-free is enabled */}
       {prefs.handsFreeMode && (
         <button
-          onClick={() => window.location.href = "/mock"}
+          onClick={() => (window.location.href = "/mock")}
           className="w-full mt-2 rounded-lg bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-purple-700 transition"
         >
           Try Hands-Free with Mock Web
@@ -833,11 +937,10 @@ function MotorControls({
   );
 }
 
-
 function ToggleRow({
   label,
   value,
-  onChange,
+  onChange
 }: {
   label: string;
   value: boolean;
@@ -869,7 +972,7 @@ function SegmentRow<T extends string>({
   label,
   options,
   current,
-  onSelect,
+  onSelect
 }: {
   label: string;
   options: readonly T[];
@@ -880,7 +983,7 @@ function SegmentRow<T extends string>({
     <div>
       <div className="mb-1 text-sm font-semibold text-slate-900">{label}</div>
       <div className="flex gap-1.5">
-        {options.map((opt) => (
+        {options.map(opt => (
           <button
             key={opt}
             onClick={() => onSelect(opt)}
