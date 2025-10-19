@@ -50,10 +50,13 @@ export default function LoginPage() {
 
     try {
       if (loginMethod === "email") {
-        if (!isValidEmail(email)) throw new Error("Please enter a valid email address.");
+        if (!isValidEmail(email))
+          throw new Error("Please enter a valid email address.");
       } else {
         if (!isValidPhone(phone))
-          throw new Error("Please enter a valid phone number (8–15 digits with optional +).");
+          throw new Error(
+            "Please enter a valid phone number (8–15 digits with optional +)."
+          );
       }
       if (!password) throw new Error("Please enter your password.");
 
@@ -62,7 +65,10 @@ export default function LoginPage() {
       setMessage("Verification code sent.");
       setStep("verify");
 
-      setTimeout(() => alert(`BridgeUI – Your verification code is: ${generated}`), 300);
+      setTimeout(
+        () => alert(`BridgeUI – Your verification code is: ${generated}`),
+        300
+      );
     } catch (err: any) {
       setError(err.message || "Failed to send verification code");
     } finally {
@@ -94,7 +100,13 @@ export default function LoginPage() {
             ? `demo-${email.trim()}`
             : `demo-${normalizePhone(phone)}`,
         conditions: [],
-        preferences: { ...DEFAULT_PREFS, buttonSize: 55, fontSize: 16, contrast: "high", spacing: "default" },
+        preferences: {
+          ...DEFAULT_PREFS,
+          buttonSize: 55,
+          fontSize: 16,
+          contrast: "high",
+          spacing: "default"
+        }
       };
       setUser(user);
 
@@ -115,17 +127,17 @@ export default function LoginPage() {
     !password;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-100 flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-6">
-          <div className="mx-auto mb-4 grid h-12 w-12 place-items-center rounded-xl bg-gradient-to-br from-purple-600 to-blue-600 text-white shadow-lg">
+          <div className="mx-auto mb-4 grid h-12 w-12 place-items-center rounded-xl bg-gradient-to-br from-green-600 to-emerald-600 text-white shadow-lg">
             <span className="text-lg font-extrabold">B</span>
           </div>
           <h1 className="text-2xl font-bold text-slate-900">
             Welcome to{" "}
-            <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-              BridgeUI
+            <span className="bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+              Chameleon
             </span>
           </h1>
           <p className="text-sm text-slate-800 mt-1">
@@ -144,7 +156,7 @@ export default function LoginPage() {
               }}
               className={`flex-1 px-6 py-3 text-sm font-semibold transition-all ${
                 loginMethod === "email"
-                  ? "text-white bg-gradient-to-r from-purple-600 to-indigo-600"
+                  ? "text-white bg-gradient-to-r from-green-600 to-emerald-700"
                   : "text-slate-900 hover:bg-slate-50"
               }`}
             >
@@ -158,7 +170,7 @@ export default function LoginPage() {
               }}
               className={`flex-1 px-6 py-3 text-sm font-semibold transition-all ${
                 loginMethod === "phone"
-                  ? "text-white bg-gradient-to-r from-purple-600 to-indigo-600"
+                  ? "text-white bg-gradient-to-r from-green-600 to-emerald-700"
                   : "text-slate-900 hover:bg-slate-50"
               }`}
             >
@@ -185,32 +197,38 @@ export default function LoginPage() {
               <form onSubmit={handleSendCode} className="space-y-4">
                 {loginMethod === "email" ? (
                   <>
-                    <label htmlFor="email" className="block text-sm font-semibold text-slate-900">
+                    <label
+                      htmlFor="email"
+                      className="block text-sm font-semibold text-slate-900"
+                    >
                       Email Address
                     </label>
                     <input
                       id="email"
                       type="email"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={e => setEmail(e.target.value)}
                       required
                       placeholder="you@example.com"
-                      className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-purple-600 text-slate-900 placeholder-slate-500"
+                      className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-green-600 text-slate-900 placeholder-slate-500"
                     />
                   </>
                 ) : (
                   <>
-                    <label htmlFor="phone" className="block text-sm font-semibold text-slate-900">
+                    <label
+                      htmlFor="phone"
+                      className="block text-sm font-semibold text-slate-900"
+                    >
                       Phone Number
                     </label>
                     <input
                       id="phone"
                       type="tel"
                       value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
+                      onChange={e => setPhone(e.target.value)}
                       required
                       placeholder="+1 206 555 0100"
-                      className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-purple-600 text-slate-900 placeholder-slate-500"
+                      className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-green-600 text-slate-900 placeholder-slate-500"
                     />
                     <p className="text-xs text-slate-700 mt-1">
                       Accepts (8–15 digits) or 10 digits.
@@ -218,16 +236,19 @@ export default function LoginPage() {
                   </>
                 )}
 
-                <label htmlFor="pwd" className="block text-sm font-semibold text-slate-900">
+                <label
+                  htmlFor="pwd"
+                  className="block text-sm font-semibold text-slate-900"
+                >
                   Password
                 </label>
                 <input
                   id="pwd"
                   type="password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={e => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-purple-600 text-slate-900 placeholder-slate-500"
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-green-600 text-slate-900 placeholder-slate-500"
                 />
 
                 <button
@@ -247,21 +268,27 @@ export default function LoginPage() {
             {/* Step 2: Verify */}
             {step === "verify" && (
               <form onSubmit={handleVerifyCode} className="space-y-4">
-                <label htmlFor="code" className="block text-sm font-semibold text-slate-900">
+                <label
+                  htmlFor="code"
+                  className="block text-sm font-semibold text-slate-900"
+                >
                   Verification Code
                 </label>
                 <input
                   id="code"
                   type="text"
                   value={code}
-                  onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                  onChange={e =>
+                    setCode(e.target.value.replace(/\D/g, "").slice(0, 6))
+                  }
                   required
                   placeholder="000000"
                   maxLength={6}
-                  className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-purple-600 text-center text-2xl tracking-widest font-mono text-slate-900 placeholder-slate-500"
+                  className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-green-600 text-center text-2xl tracking-widest font-mono text-slate-900 placeholder-slate-500"
                 />
                 <p className="text-sm text-slate-800">
-                  Code sent to {loginMethod === "email" ? email : normalizePhone(phone)}
+                  Code sent to{" "}
+                  {loginMethod === "email" ? email : normalizePhone(phone)}
                 </p>
 
                 <button
@@ -270,7 +297,7 @@ export default function LoginPage() {
                   className={`w-full h-11 rounded-xl text-sm font-semibold transition ${
                     loading || code.length !== 6
                       ? "cursor-not-allowed bg-slate-200 text-slate-600"
-                      : "bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:from-purple-700 hover:to-indigo-700"
+                      : "bg-gradient-to-r from-green-600 to-emerald-700 text-white hover:from-green-700 hover:to-emerald-800"
                   }`}
                 >
                   {loading ? "Verifying..." : "Verify & Login"}
@@ -288,7 +315,9 @@ export default function LoginPage() {
 
             {/* Info Box */}
             <div className="mt-6 p-4 rounded-xl bg-blue-50 border border-blue-300">
-              <h4 className="text-sm font-semibold text-blue-900 mb-1">🔐 Verification</h4>
+              <h4 className="text-sm font-semibold text-blue-900 mb-1">
+                🔐 Verification
+              </h4>
               <ul className="text-xs text-blue-900 space-y-1">
                 <li>• 6-digit code shown in-page and via alert for demo.</li>
                 <li>• No data leaves your device; this is local only.</li>
@@ -299,7 +328,7 @@ export default function LoginPage() {
 
           <button
             type="button"
-            onClick={() => router.push('/')}
+            onClick={() => router.push("/")}
             className="w-full h-10 rounded-xl border border-slate-300 bg-white text-sm font-semibold text-slate-900 hover:bg-slate-50"
           >
             ← Back to Home

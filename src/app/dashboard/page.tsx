@@ -107,7 +107,8 @@ export default function Dashboard() {
 
   function downloadZip() {
     const a = document.createElement("a");
-    a.href = "/downloads/chameleon-extension.zip";
+    // Use existing asset; rename on download for branding
+    a.href = "/downloads/bridgeui-extension.zip";
     a.download = "chameleon-extension.zip";
     a.rel = "noopener";
     document.body.appendChild(a);
@@ -144,15 +145,15 @@ export default function Dashboard() {
   const p = user.preferences;
 
   return (
-    <div className="min-h-dvh bg-gradient-to-br from-purple-50 via-white to-blue-50 flex flex-col">
-      {" "}
-      {/* Header */}
+    <div className="min-h-dvh bg-gradient-to-br from-green-50 via-white to-emerald-100 flex flex-col">
       <nav className="bg-white shadow-sm border-b border-slate-200">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
-          <div className="flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-purple-600 to-blue-600 text-white text-sm font-bold">
-              R
-            </div>
+          <div className="flex items-center gap-3">
+            <img
+              src="/chameleon-logo.png"
+              alt="Chameleon Logo"
+              className="h-15 w-15 object-contain"
+            />
             <span className="text-2xl font-bold text-gray-800">Chameleon</span>
           </div>
 
@@ -165,7 +166,7 @@ export default function Dashboard() {
                 logoutUser();
                 location.href = "/login";
               }}
-              className="rounded-lg bg-purple-600 px-3.5 py-1.5 text-sm text-white transition hover:bg-purple-700"
+              className="rounded-lg bg-emerald-600 px-3.5 py-1.5 text-sm text-white transition hover:bg-emerald-700"
             >
               Log out
             </button>
@@ -205,7 +206,7 @@ export default function Dashboard() {
       <div className="mx-auto max-w-6xl px-5 py-6">
         {tab === "overview" && (
           <section className="space-y-4">
-            <div className="rounded-xl border border-slate-300 bg-gradient-to-r from-purple-600 to-blue-600 p-6 text-white shadow-lg">
+            <div className="rounded-xl border border-slate-300 bg-gradient-to-r from-green-600 to-blue-600 p-6 text-white shadow-lg">
               <h1 className="text-xl font-semibold">Welcome, {user.name}</h1>
               <p className="mt-1 text-sm text-purple-50">
                 Download the extension, then try it on any website to see
@@ -214,12 +215,12 @@ export default function Dashboard() {
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 <button
                   onClick={downloadZip}
-                  className="rounded-lg bg-white px-3.5 py-1.5 text-sm font-semibold text-purple-800 shadow hover:bg-slate-100"
+                  className="rounded-lg bg-white px-3.5 py-1.5 text-sm font-semibold text-green-800 shadow hover:bg-slate-100"
                 >
                   <Download className="mr-1 inline" size={16} /> Download
                   Extension
                 </button>
-                <span className="text-xs text-purple-50">
+                <span className="text-xs text-green-50">
                   Token:{" "}
                   <code className="rounded bg-white/20 px-1.5 py-0.5">
                     {user.token}
@@ -253,9 +254,8 @@ export default function Dashboard() {
                   Quick Info
                 </h3>
                 <p className="mt-2 text-xs text-slate-700">
-                  This is a proof-of-concept demo. All preferences are stored
-                  locally. The extension adapts websites in real-time based on
-                  your accessibility needs.
+                  All preferences are stored locally. The extension adapts
+                  websites in real-time based on your accessibility needs.
                 </p>
               </div>
             </div>
@@ -276,7 +276,7 @@ export default function Dashboard() {
                 />
                 <button
                   type="submit"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg bg-purple-600 p-2 text-white transition hover:bg-purple-700"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg bg-green-600 p-2 text-white transition hover:bg-green-700"
                 >
                   <Send size={16} />
                 </button>
@@ -317,7 +317,7 @@ export default function Dashboard() {
                         className={
                           "rounded-xl border p-3 transition " +
                           (active
-                            ? "border-purple-600 bg-purple-50"
+                            ? "border-green-600 bg-green-50"
                             : "border-slate-300 hover:bg-slate-50")
                         }
                       >
@@ -326,12 +326,12 @@ export default function Dashboard() {
                             <div
                               className={
                                 "grid h-8 w-8 flex-shrink-0 place-items-center rounded-lg " +
-                                (active ? "bg-purple-100" : "bg-slate-100")
+                                (active ? "bg-green-100" : "bg-slate-100")
                               }
                             >
                               <Icon
                                 className={
-                                  active ? "text-purple-700" : "text-slate-600"
+                                  active ? "text-green-700" : "text-slate-600"
                                 }
                                 size={16}
                               />
@@ -350,7 +350,7 @@ export default function Dashboard() {
                             className={
                               "flex-shrink-0 rounded-lg px-2 py-1 text-xs font-semibold " +
                               (active
-                                ? "bg-purple-600 text-white"
+                                ? "bg-green-600 text-white"
                                 : "border border-slate-300 bg-white text-slate-900")
                             }
                           >
@@ -413,9 +413,11 @@ export default function Dashboard() {
           <div className="grid gap-6 md:grid-cols-3">
             <div>
               <div className="mb-2 flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-purple-600 to-blue-600 text-white text-sm font-bold">
-                  R
-                </div>
+                <img
+                  src="/chameleon-logo.png"
+                  alt="Chameleon Logo"
+                  className="h-8 w-8 rounded-md object-cover shadow-sm"
+                />
                 <span className="text-lg font-bold text-gray-800">
                   Chameleon
                 </span>
@@ -432,22 +434,22 @@ export default function Dashboard() {
               </h3>
               <ul className="space-y-1 text-xs text-slate-600">
                 <li>
-                  <a className="transition hover:text-purple-600" href="#">
+                  <a className="transition hover:text-green-600" href="#">
                     Documentation
                   </a>
                 </li>
                 <li>
-                  <a className="transition hover:text-purple-600" href="#">
+                  <a className="transition hover:text-green-600" href="#">
                     Support
                   </a>
                 </li>
                 <li>
-                  <a className="transition hover:text-purple-600" href="#">
+                  <a className="transition hover:text-green-600" href="#">
                     Privacy Policy
                   </a>
                 </li>
                 <li>
-                  <a className="transition hover:text-purple-600" href="#">
+                  <a className="transition hover:text-green-600" href="#">
                     Terms of Service
                   </a>
                 </li>
@@ -466,7 +468,7 @@ export default function Dashboard() {
                     href="https://github.com/AjitMallav/bridgeui-hub"
                     target="_blank"
                     rel="noopener"
-                    className="transition hover:text-purple-600"
+                    className="transition hover:text-green-600"
                   >
                     bridgeui-hub
                   </a>
@@ -506,7 +508,7 @@ function TabLink({
       <span
         className={
           "absolute inset-x-2 -bottom-[1px] block rounded-full transition-all " +
-          (active ? "h-[2px] bg-purple-600" : "h-[2px] bg-transparent")
+          (active ? "h-[2px] bg-green-600" : "h-[2px] bg-transparent")
         }
       />
     </button>
@@ -530,9 +532,9 @@ function HelpGuides() {
       </div>
 
       {/* ADHD */}
-      <div className="rounded-xl border border-purple-300 bg-purple-50 p-5 shadow-sm">
+      <div className="rounded-xl border border-green-300 bg-green-50 p-5 shadow-sm">
         <GuideHeader
-          icon={<Brain className="text-purple-700" size={20} />}
+          icon={<Brain className="text-green-700" size={20} />}
           title="ADHD (Attention Deficit Hyperactivity Disorder)"
         />
         <Severity
@@ -552,7 +554,7 @@ function HelpGuides() {
           ]}
         />
         <Recs
-          color="purple"
+          color="green"
           items={[
             [
               "Reduce animations",
@@ -875,7 +877,7 @@ function LowVisionControls({
             onChange={e =>
               onChange({ ...prefs, globalZoom: Number(e.target.value) })
             }
-            className="flex-1 accent-purple-600"
+            className="flex-1 accent-green-600"
           />
           <div className="w-18 rounded-lg border border-slate-300 px-2.5 py-1.5 text-center text-sm font-semibold text-slate-900">
             {prefs.globalZoom.toFixed(2)}×
@@ -926,7 +928,7 @@ function MotorControls({
       {prefs.handsFreeMode && (
         <button
           onClick={() => (window.location.href = "/mock")}
-          className="w-full mt-2 rounded-lg bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-purple-700 transition"
+          className="w-full mt-2 rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-green-700 transition"
         >
           Try Hands-Free with Mock Web
         </button>
@@ -952,7 +954,7 @@ function ToggleRow({
         onClick={() => onChange(!value)}
         className={
           "relative inline-flex h-6 w-11 items-center rounded-full transition " +
-          (value ? "bg-purple-600" : "bg-slate-300")
+          (value ? "bg-green-600" : "bg-slate-300")
         }
       >
         <span
@@ -988,7 +990,7 @@ function SegmentRow<T extends string>({
             className={
               "rounded-lg px-3 py-1.5 text-sm font-medium capitalize transition " +
               (current === opt
-                ? "bg-purple-600 text-white"
+                ? "bg-green-600 text-white"
                 : "bg-slate-100 text-slate-900 hover:bg-slate-200")
             }
           >
